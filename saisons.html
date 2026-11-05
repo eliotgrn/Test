@@ -1,0 +1,1079 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="GRÜN"><meta name="theme-color" content="#07090A"><meta name="color-scheme" content="dark">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png?v=3"><link rel="icon" href="icon-192.png?v=3">
+<style>/* GRÜN 2.0 — styles communs injectés dans chaque module (barre du bas, feuilles, toasts, composants partagés).
+   Design E « Night court » : UN SEUL THÈME, SOMBRE. Les composants communs utilisent les jetons --gx-* ci-dessous
+   (identiques quel que soit le module) ; les modules gardent leurs jetons (--bg, --panel, --ink, --mute, --line, --soft) mis à la palette E. */
+:root{
+  --gx-bg:#07090A; --gx-s1:#111614; --gx-s2:#1A211D; --gx-btn:#121714; --gx-line:#263029; --gx-sep:#1A211D;
+  --gx-ink:#F2F5F0; --gx-mute:#9AA59E; --gx-y:#E4FF3A; --gx-on:#07090A; --gx-g:#3BE08A; --gx-warn:#FF9F43; --gx-bad:#FF5C5C;
+  --gx-ui:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif; --gx-cond:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --grun:#E4FF3A; --grun-ink:#07090A; --grun-hi:#E4FF3A; --grun-on:#07090A; --nav-h:62px;
+  color-scheme:dark;
+}
+html{background:var(--gx-bg)}
+body.grun-has-nav{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px))}
+
+/* ---------- WORDMARK « GRÜN » aux deux balles (G.marque()) : la taille suit font-size ---------- */
+.grun-wm{display:inline-flex;align-items:flex-end;font-family:var(--gx-cond);font-weight:800;line-height:.82;letter-spacing:.03em;color:var(--gx-ink);white-space:nowrap}
+.grun-wm .u{position:relative;display:inline-block;color:var(--gx-g)}
+.grun-wm .u i{position:absolute;top:-.233em;width:.167em;height:.167em;border-radius:50%;background:var(--gx-y)}
+.grun-wm .u i:first-child{left:.067em}
+.grun-wm .u i+i{right:.067em}
+
+/* ---------- BARRE DU BAS CONTEXTUELLE (GRÜN 2.1, maquettes F2-F6) : « GRÜN · Accueil » + les onglets du mode (actif en jaune) ---------- */
+#grun-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);align-items:stretch;
+  background:#0C0F0D;border-top:1px solid var(--gx-sep);padding:0 max(6px,calc((100vw - 700px) / 2)) env(safe-area-inset-bottom,0px)}
+#grun-nav.seul{grid-auto-columns:minmax(0,120px);justify-content:center}
+#grun-nav a{min-width:0;min-height:var(--nav-h);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  text-decoration:none;color:var(--gx-mute);font:400 11px/1.1 var(--gx-ui);letter-spacing:0;-webkit-tap-highlight-color:transparent}
+#grun-nav a span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#grun-nav a span{letter-spacing:-.01em}#grun-nav a{padding-left:1px;padding-right:1px}
+#grun-nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#grun-nav a.on{color:var(--gx-y);font-weight:600}
+/* iPad / iPhone (Safari) : quand la barre d'outils de Safari se replie, la barre fixe peut se décoller du bord ; son fond se prolonge vers le bas pour que rien ne défile visiblement dessous */
+#grun-nav{box-shadow:0 160px 0 0 #0C0F0D}
+html,body{overscroll-behavior-y:none}
+/* audit 26 oct. : « Banque scientifique » (un seul nom par module) peut passer sur 2 lignes ; les icônes restent alignées */
+#grun-nav[data-mode=biblio] a:not(.nv-g){justify-content:flex-start;padding-top:8px;gap:3px}#grun-nav[data-mode=biblio] a:not(.nv-g) span{white-space:normal;text-align:center;line-height:1.02;max-height:2.1em}
+#grun-nav a:active{opacity:.7}
+/* « GRÜN » (deux balles du Ü) + « Accueil » : retour à la page de garde, toujours à gauche */
+#grun-nav a.nv-g{font:800 13px/1 var(--gx-cond);letter-spacing:.06em;gap:5px}
+#grun-nav a.nv-g .grun-wm{font-size:18px;padding-top:3px;overflow:visible}
+#grun-nav a.nv-g>span:last-child,#grun-nav a.nv-g .grun-wm,#grun-nav a.nv-g .grun-wm span{overflow:visible;max-width:none}
+@media print{#grun-nav{display:none}body.grun-has-nav{padding-bottom:0}}
+/* « + » (Performance et mode joueur seulement) */
+#grun-nav #grun-plus{min-width:0;border:0;background:none;padding:0;display:flex;align-items:center;justify-content:center;min-height:var(--nav-h);cursor:pointer;-webkit-tap-highlight-color:transparent}
+#grun-nav #grun-plus span{width:46px;height:46px;border-radius:50%;background:var(--gx-y);color:var(--gx-on);display:flex;align-items:center;justify-content:center;transition:transform .1s ease}
+#grun-nav #grun-plus svg{width:24px;height:24px;stroke-width:2.4;stroke:currentColor}
+#grun-nav #grun-plus:active span{transform:scale(.92)}
+@media (max-width:370px){#grun-nav a{font-size:10.5px}#grun-nav #grun-plus span{width:42px;height:42px}}
+/* feuille « Âge et sexe » de la Bibliothèque */
+.gs-ages{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.gs-ages .gs-chip{padding:0 4px;text-align:center;font-family:var(--gx-cond);font-weight:700;font-size:16px;letter-spacing:.02em}
+@media (max-width:360px){.gs-ages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* fil « poupée russe » : bandeau de retour vers le module appelant */
+.grun-relais{position:sticky;top:0;z-index:40;display:flex;gap:10px;align-items:center;justify-content:space-between;
+  background:var(--gx-s2);color:var(--gx-ink);border-bottom:1px solid var(--gx-line);padding:8px 16px;font:600 14px/1.3 var(--gx-ui)}
+.grun-relais a,.grun-relais button{color:var(--gx-ink);background:var(--gx-s1);border:1px solid var(--gx-line);border-radius:22px;
+  min-height:44px;padding:0 14px;display:inline-flex;align-items:center;text-decoration:none;font:inherit;white-space:nowrap;cursor:pointer}
+.grun-relais button:last-child,.grun-relais .main{background:var(--gx-y);border-color:var(--gx-y);color:var(--gx-on)}
+.grun-mod #back{visibility:visible!important}
+/* mode simple / mode expert (GRUN.expert) : « xp » = réservé au mode expert ; « xs » = seulement en mode simple */
+html.grun-simple .xp{display:none!important}
+html.grun-expert .xs{display:none!important}
+/* « Plus d'options » : réglages fins et actions rares, repliés (même aspect dans tous les modules) */
+details.grun-plus{margin-top:14px;border:1px solid var(--gx-line);border-radius:18px;background:var(--gx-s1)}
+details.grun-plus>summary{list-style:none;cursor:pointer;min-height:52px;display:flex;align-items:center;gap:10px;padding:0 16px;font:600 15px/1.2 var(--gx-cond);letter-spacing:.14em;text-transform:uppercase;color:var(--gx-mute)}
+details.grun-plus>summary::-webkit-details-marker{display:none}
+details.grun-plus>summary::before{content:"+";font-weight:700;width:1em;color:var(--gx-y);font-size:18px;letter-spacing:0}
+details.grun-plus[open]>summary::before{content:"–"}
+details.grun-plus>.grun-plusb{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px}
+/* Grilles : bilan en cours + un gros bouton « Créer un nouveau bilan » */
+.bil1{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:14px;padding:12px 16px;border:1px solid var(--gx-line);border-radius:18px;background:var(--gx-s1)}
+.bil1 b{display:block;font-size:1.1rem}
+.bil1 small{color:var(--gx-mute)}
+.go.big{min-height:52px;padding:0 20px;font-size:1.02rem}
+/* listes : colonne « code » masquée en mode simple (classe hasx sur la ligne, cx sur le code) */
+html.grun-simple .hasx{grid-template-columns:minmax(0,1fr)!important}
+html.grun-simple .cx{display:none!important}
+/* Grilles : « L'essentiel » en cartes sur téléphone ; toucher une ligne ouvre son détail */
+#doc table.cartes td.lgo{cursor:pointer;color:var(--acc,var(--gx-y));font-weight:700}
+@media (max-width:640px){
+  #doc table.cartes,#doc table.cartes tbody,#doc table.cartes tr,#doc table.cartes td{display:block;width:auto!important}
+  #doc table.cartes thead{display:none}
+  #doc table.cartes tr{padding:10px 12px;border-bottom:1px solid var(--line,var(--gx-line))}
+  #doc table.cartes td{border:none!important;padding:2px 0!important}
+  #doc table.cartes td.lgo{font-size:1.05em}
+  #doc table.cartes td.lgo::after{content:" ›"}
+  #doc table.cartes td:nth-child(3)::before{content:"Test ★ : ";font-weight:600;color:var(--mute,var(--gx-mute))}
+}
+/* lignes de grille affichées en clair : les noms longs passent à la ligne */
+.lc{white-space:normal!important;overflow-wrap:anywhere;display:inline-block;max-width:100%}
+.boxh>div{min-width:0;flex:1 1 auto}
+/* bouton PDF commun (même aspect et même libellé « … PDF » dans tous les modules) : <button class="grun-pdf"><svg/><span>Rapport PDF</span></button> */
+.grun-pdf{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:22px;border:1px solid var(--gx-line);background:var(--gx-s1);color:var(--gx-ink);font:600 15px/1 var(--gx-ui);cursor:pointer;white-space:nowrap;text-decoration:none}
+.grun-pdf svg{width:19px;height:19px;fill:none;stroke:var(--gx-y);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.grun-pdf:disabled{opacity:.6}
+
+/* ===================== SOCLE « chemin ultra intuitif » =====================
+   RÈGLES DE MISE EN PAGE (toutes les pages) :
+   - retour « ‹ » en haut à gauche (#back) ; joueur en cours + « ? » en haut à droite (.grun-topx, injectés par GRUN.nav) ;
+   - action principale EN BAS, grande, dans la zone du pouce : <div class="grun-actbar"><button class="gs-btn main">…</button></div> ;
+   - options secondaires repliées : <details class="grun-plus"><summary>Plus d'options</summary><div class="grun-plusb">…</div></details> ;
+   - « + » unique au centre de la barre du bas (#grun-plus) ; créations dans une feuille (.grun-ov > .grun-sheet). */
+/* barre du haut : joueur en cours + aide */
+.grun-topx{display:inline-flex;gap:6px;align-items:center;flex:0 0 auto}
+.grun-chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;max-width:130px;padding:0 12px 0 4px;border:1px solid var(--gx-line);border-radius:22px;background:var(--gx-btn);color:var(--gx-ink);font:600 14px/1 var(--gx-ui);cursor:pointer}
+.grun-chip .gc-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.gc-av{flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:var(--gx-y);color:var(--gx-on);display:inline-flex;align-items:center;justify-content:center;font:800 15px/1 var(--gx-cond)}
+.gc-av.g{border-radius:10px;background:var(--gx-g);color:var(--gx-on)}
+.gc-av.vide{background:var(--gx-s2);color:var(--gx-y)}
+.grun-q{width:44px;height:44px;border-radius:50%;border:1px solid var(--gx-line);background:var(--gx-btn);color:var(--gx-ink);font:700 18px/1 var(--gx-cond);cursor:pointer;padding:0}
+@media (max-width:430px){.grun-chip{max-width:96px;padding-right:10px}.grun-chip .gc-nm{font-size:13px}}
+@media (max-width:360px){.grun-chip .gc-nm{display:none}.grun-chip{padding:0 4px}}
+/* feuille (bottom sheet sur téléphone, fenêtre au centre sur iPad) */
+.grun-ov{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.62);display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .16s ease}
+.grun-ov.in{opacity:1}.grun-ov.out{opacity:0}
+.grun-sheet{width:100%;max-width:560px;max-height:min(90vh,calc(100vh - env(safe-area-inset-top,0px) - 24px));display:flex;flex-direction:column;background:var(--gx-s1);color:var(--gx-ink);border:1px solid var(--gx-line);border-bottom:0;border-radius:22px 22px 0 0;transform:translateY(24px);transition:transform .18s ease;font-family:var(--gx-ui);font-size:16px;line-height:1.4}
+.grun-sheet.large{max-width:720px}
+.grun-ov.in .grun-sheet{transform:none}
+@media (min-width:700px){.grun-ov{align-items:center}.grun-sheet{border-radius:22px;border-bottom:1px solid var(--gx-line);max-height:86vh}}
+.gs-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 16px 10px 20px;border-bottom:1px solid var(--gx-line)}
+.gs-h b{font-family:var(--gx-cond);font-size:1.5em;font-weight:800;line-height:1.05;text-transform:uppercase;letter-spacing:.02em}
+.gs-x{width:44px;height:44px;border-radius:50%;border:1px solid var(--gx-line);background:var(--gx-btn);color:var(--gx-ink);font-size:24px;line-height:1;cursor:pointer;flex:0 0 auto}
+.gs-b{padding:14px 20px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:12px;flex:1 1 auto;min-height:0}
+.gs-f{display:flex;gap:8px;padding:12px 20px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--gx-line)}
+.gs-btn{min-height:52px;border-radius:26px;border:1px solid var(--gx-line);background:var(--gx-s2);color:var(--gx-ink);font:700 16px/1.1 var(--gx-ui);padding:0 18px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;gap:6px}
+.gs-btn.main{flex:1;background:var(--gx-y);border-color:var(--gx-y);color:var(--gx-on)}
+.gs-btn.sec{flex:0 1 auto;margin:0}
+.gs-f{flex:0 0 auto}
+.gs-btn.sm{min-height:44px;font-size:14.5px;border-radius:22px;padding:0 14px;flex:0 0 auto}
+.gs-btn:disabled{opacity:.5}
+.gs-btn:active{transform:scale(.97)}
+.grun-ov.danger .gs-btn.main{background:var(--gx-bad);border-color:var(--gx-bad);color:var(--gx-on)}
+.gs-form{display:flex;flex-direction:column;gap:12px;margin:0}
+.gs-l{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14.5px;color:var(--gx-ink);min-width:0}
+.gs-l small{font-weight:500;color:var(--gx-mute)}
+.gs-inp{min-height:48px;border:1px solid var(--gx-line);border-radius:12px;background:var(--gx-s2);color:var(--gx-ink);padding:0 12px;font:500 17px/1.2 var(--gx-ui);width:100%;max-width:100%;box-sizing:border-box;color-scheme:dark}
+.gs-ta{padding:10px 12px;min-height:84px;resize:vertical;line-height:1.4}
+.gs-inp:focus{outline:2px solid var(--gx-y);outline-offset:1px}
+.gs-seg{display:flex;border:1px solid var(--gx-line);border-radius:24px;overflow:hidden;background:var(--gx-s2)}
+.gs-seg button{flex:1;min-height:46px;border:0;background:none;color:var(--gx-mute);font:600 16px/1 var(--gx-ui);cursor:pointer}
+.gs-seg button+button{border-left:1px solid var(--gx-line)}
+.gs-seg button[aria-checked=true]{background:var(--gx-y);color:var(--gx-on)}
+.gs-chips{display:flex;flex-wrap:wrap;gap:6px}
+.gs-chip{min-height:44px;border:1px solid var(--gx-line);background:var(--gx-s2);color:var(--gx-ink);border-radius:22px;padding:0 16px;font:600 15px/1 var(--gx-ui);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gs-chips.big .gs-chip{min-height:48px;font-size:16px}
+.gs-chip.g{border-style:dashed}
+.gs-chip[aria-pressed=true]{background:var(--gx-y);border-color:var(--gx-y);color:var(--gx-on)}
+.gs-err{color:var(--gx-bad);font-weight:600;margin:0;min-height:0}
+.gs-err:empty{display:none}
+.gs-m{color:var(--gx-mute);font-size:14.5px;margin:0}
+.gs-m a{color:var(--gx-y)}
+.gs-p{margin:0;font-size:16.5px;line-height:1.5}
+.gs-sert{color:var(--gx-g);font-weight:600;font-size:13px}
+.gs-lien{align-self:flex-start;border:0;background:none;color:var(--gx-y);font:700 15.5px/1.2 var(--gx-ui);padding:10px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.gs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.gs-n .gs-inp{font-variant-numeric:tabular-nums}
+.gs-c{display:flex;gap:10px;align-items:flex-start;font-weight:600;font-size:15px}
+.gs-c input{width:22px;height:22px;flex:0 0 auto;margin-top:1px;accent-color:var(--gx-y)}
+.gs-c small{font-weight:500;color:var(--gx-mute)}
+.gs-cp fieldset{border:1px solid var(--gx-line);border-radius:16px;padding:10px 14px 14px;margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+.gs-cp legend{font:700 13px/1 var(--gx-cond);letter-spacing:.14em;text-transform:uppercase;color:var(--gx-mute);padding:0 4px}
+.gs-cp legend small{text-transform:none;letter-spacing:0;font-weight:500;font-family:var(--gx-ui)}
+details.gs-plus>summary{cursor:pointer;color:var(--gx-y);font-weight:700;padding:8px 0;list-style:none}
+details.gs-plus>summary::-webkit-details-marker{display:none}
+details.gs-plus[open]>summary{margin-bottom:8px}
+.gs-list{border:1px solid var(--gx-line);border-radius:14px;overflow:hidden}
+.gs-row{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;padding:9px 12px;border-top:1px solid var(--gx-line)}
+.gs-row:first-child{border-top:0}
+.gs-row span{color:var(--gx-mute);font-size:14px}
+.gs-row small{flex-basis:100%;color:var(--gx-bad);font-weight:600}
+.gs-row.ko b{color:var(--gx-bad)}
+.gs-menu{display:flex;flex-direction:column;gap:8px}
+.gs-menu.plus{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+@media (min-width:560px){.gs-menu.plus{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.gs-it{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 14px;align-items:center;text-align:left;min-height:64px;padding:10px 14px;border:1px solid var(--gx-line);border-radius:16px;background:var(--gx-s2);color:var(--gx-ink);text-decoration:none;cursor:pointer;font:inherit}
+.gs-it b{font-size:16.5px;grid-column:2}
+.gs-it span{grid-column:2;color:var(--gx-mute);font-size:13.5px;line-height:1.3}
+.gs-it:not(:has(.pi)){grid-template-columns:minmax(0,1fr)}.gs-it:not(:has(.pi)) b,.gs-it:not(:has(.pi)) span{grid-column:1}
+.gs-it.x{border-color:var(--gx-y)}
+.gs-it.st{cursor:default}
+.gs-it.st .gs-seg{grid-column:1/-1;margin-top:6px}
+.gs-it:active{background:#202823}
+.pi{grid-row:1/3;width:42px;height:42px;border-radius:13px;background:var(--gx-s1);border:1px solid var(--gx-line);position:relative}
+.pi::after{content:"";position:absolute;inset:10px;background:var(--gx-y);-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+.pi-joueur{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c0-4 4-6 8-6s8 2 8 6'/%3E%3C/svg%3E")}
+.pi-groupe{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Ccircle cx='8' cy='9' r='3'/%3E%3Ccircle cx='16' cy='9' r='3'/%3E%3Cpath d='M2 20c0-3 3-5 6-5s6 2 6 5M12 20c0-3 2-5 4-5s6 2 6 5'/%3E%3C/svg%3E")}
+.pi-session{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E")}
+.pi-test{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M12 3l8 5v8l-8 5-8-5V8z'/%3E%3C/svg%3E")}
+.pi-exo{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z'/%3E%3Cpath d='M4 19V5'/%3E%3C/svg%3E")}
+.pi-note{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M4 20h4L19 9l-4-4L4 16z'/%3E%3C/svg%3E")}
+.pi-wu{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M12 3c2 3 5 5 5 9a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-8z'/%3E%3C/svg%3E")}
+.gs-cur{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:12px 14px;border-radius:16px;background:var(--gx-s2);border:1px solid var(--gx-line)}
+.gs-cur b{font:800 19px/1.1 var(--gx-cond);text-transform:uppercase;letter-spacing:.02em}.gs-cur span{color:var(--gx-mute);font-size:14px;flex:1}
+.gs-bar{display:flex;flex-direction:column;gap:6px}
+.gs-bar>div,.gc-bar{display:block;height:8px;border-radius:99px;background:var(--gx-s2);overflow:hidden}
+.gs-bar i,.gc-bar i{display:block;height:100%;background:var(--gx-g);border-radius:99px;transition:width .3s}
+/* toast avec « Annuler » */
+#grun-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h,62px) + 14px + env(safe-area-inset-bottom,0px));z-index:260;display:flex;gap:12px;align-items:center;max-width:calc(100vw - 32px);background:var(--gx-s2);color:var(--gx-ink);border:1px solid var(--gx-line);padding:8px 8px 8px 16px;border-radius:18px;font:600 15px/1.3 var(--gx-ui)}
+#grun-toast:not(:has(button)){padding:12px 18px}
+#grun-toast button{min-height:44px;border:0;border-radius:22px;background:var(--gx-y);color:var(--gx-on);font:700 15px/1 var(--gx-ui);padding:0 16px;cursor:pointer;white-space:nowrap}
+body:not(.grun-has-nav) #grun-toast{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+#grun-saved{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:12px;z-index:270;background:var(--gx-g);color:var(--gx-on);font:700 13px/1 var(--gx-ui);padding:8px 12px;border-radius:99px;opacity:0;transform:translateY(-6px);transition:opacity .2s,transform .2s;pointer-events:none}
+#grun-saved.on{opacity:1;transform:none}
+/* barre de complétude (dossier) */
+.grun-compl{border:1px solid var(--gx-line);border-radius:18px;background:var(--gx-s1);padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.grun-compl .gc-h{display:flex;gap:10px;align-items:center}.grun-compl .gc-h b{white-space:nowrap}.grun-compl .gc-bar{flex:1}
+.grun-compl ul{margin:0;padding-left:18px;font-size:14.5px;color:var(--gx-mute)}
+.grun-compl ul b{color:var(--gx-ink);font-weight:600}
+.grun-compl .gs-btn{align-self:flex-start}
+.grun-compl.ok{padding:10px 16px}
+/* action principale en bas (zone du pouce), au-dessus de la barre du bas */
+.grun-actbar{position:sticky;bottom:calc(var(--nav-h,62px) + env(safe-area-inset-bottom,0px) + 8px);z-index:20;display:flex;gap:8px;margin-top:16px}
+body:not(.grun-has-nav) .grun-actbar{bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+.grun-actbar>*{flex:1;min-height:52px}
+/* visite guidée, schéma */
+.gv h3{font-family:var(--gx-cond);font-weight:800;font-size:1.8em;margin:6px 0 8px;line-height:1.05;text-transform:uppercase;letter-spacing:.02em}
+.gv-dots{display:flex;gap:6px}.gv-dots i{width:24px;height:5px;border-radius:9px;background:var(--gx-line)}.gv-dots i.vu{background:var(--gx-mute)}.gv-dots i.on{background:var(--gx-y)}
+.grun-schema{width:100%;max-width:440px;display:block;margin:12px auto 0;font-family:var(--gx-cond)}
+.grun-schema .s-court rect,.grun-schema .s-court path{fill:none;stroke:var(--gx-g);stroke-opacity:.4;stroke-width:1.5}
+.grun-schema .s-court .s-net{stroke:var(--gx-y);stroke-opacity:1;stroke-width:2.5;stroke-dasharray:2 5;stroke-linecap:round}
+.grun-schema .s-p{fill:var(--gx-s2);stroke:var(--gx-line);stroke-width:1}
+.grun-schema .s-n{fill:#0B0F0D;stroke:var(--gx-y);stroke-width:1.5}
+.grun-schema text{fill:var(--gx-ink);text-anchor:middle}
+.grun-schema .s-t{font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.04em}
+.grun-schema .s-s{font-family:var(--gx-ui);font-size:11.5px;fill:var(--gx-mute)}
+.grun-schema .s-w{font-weight:800;font-size:19px;letter-spacing:.05em}
+.grun-doll{margin-top:10px}.grun-doll div{border:1.5px solid var(--gx-y);border-radius:16px;padding:10px 12px 12px;font-weight:700;color:var(--gx-ink);background:transparent}.grun-doll div div{margin-top:8px;background:rgba(228,255,58,.06)}.grun-doll div div div{background:var(--gx-y);color:var(--gx-on)}
+.grun-demo-bar{display:flex;gap:14px;align-items:center;justify-content:center;margin-top:10px}
+.grun-chip.demo{pointer-events:none}
+.grun-plus-demo{width:46px;height:46px;border-radius:50%;background:var(--gx-y);color:var(--gx-on);display:inline-flex;align-items:center;justify-content:center;font:700 28px/1 var(--gx-ui)}
+html.grun-sheet-on body{overflow:hidden}
+@media print{.grun-topx,#grun-toast,#grun-saved,.grun-ov,.grun-actbar{display:none!important}}
+/* barre du haut des modules sur téléphone : le joueur en cours se réduit à son initiale, le titre s'abrège */
+html.grun-mod .topin .brand{min-width:0;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
+@media (max-width:430px){.grun-chip .gc-nm{display:none}.grun-chip{padding:0 4px;max-width:none}.grun-topx{gap:4px}}
+@media (min-width:431px){.grun-chip:has(.gc-av.vide){max-width:none}.grun-chip:has(.gc-av.vide) .gc-nm{overflow:visible}}
+/* VÉRIF E1 (20 oct.) — barre du haut des modules sur téléphone : retour rond identique à l'accueil, recherche repliée en loupe ronde
+   (elle s'ouvre au toucher et reste ouverte tant qu'un mot est tapé), titre seul à gauche : pas de champ tronqué. */
+html.grun-mod #back{font-size:0!important;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;padding:0;border-radius:22px;flex:0 0 44px}
+html.grun-mod #back::before{content:"";width:20px;height:20px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 5l-7 7 7 7'/%3E%3C/svg%3E") center/20px no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 5l-7 7 7 7'/%3E%3C/svg%3E") center/20px no-repeat}
+@media (max-width:600px){
+  html.grun-mod .topin .sbox{flex:0 0 44px;width:44px;margin-left:auto}
+  html.grun-mod .topin .sbox input{padding:0 0 0 44px;cursor:pointer}
+  html.grun-mod .topin .sbox input::placeholder{color:transparent}
+  html.grun-mod .topin .sbox svg{left:13px;pointer-events:none}
+  html.grun-mod .topin .sbox:focus-within,html.grun-mod .topin .sbox:has(input:not(:placeholder-shown)){flex:1 1 auto;width:auto;margin-left:0}
+  html.grun-mod .topin .sbox:focus-within input,html.grun-mod .topin .sbox:has(input:not(:placeholder-shown)) input{padding-left:40px;cursor:text}
+  html.grun-mod .topin .sbox:focus-within input::placeholder{color:var(--gx-mute)}
+  html.grun-mod .topin:has(.sbox:focus-within) .brand,html.grun-mod .topin:has(.sbox input:not(:placeholder-shown)) .brand{display:none}
+}
+/* action principale du bas : un libellé long se coupe proprement (…) au lieu de déborder des deux côtés */
+.grun-actbar .gs-btn:only-child{display:block;line-height:50px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#grun-nav[data-mode="outils"]{grid-template-columns:minmax(0,.82fr) repeat(3,minmax(0,.9fr)) minmax(0,1.38fr)}
+
+/* 2 nov. : plus de puce « joueur en cours » (ancienne architecture) ; « Plus de filtres » = un bouton qui ouvre une feuille */
+.grun-chip{display:none!important}
+details.fplus>summary,details.grun-plus>summary{display:inline-flex!important;align-items:center;min-height:44px;padding:0 16px!important;border:1px solid var(--gx-line,#2a302d);border-radius:999px;cursor:pointer}
+details.fplus>summary::before,details.grun-plus>summary::before{content:""!important}
+.gs-fplus .frow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+details.fplus[open]>*:not(summary),details.grun-plus[open]>*:not(summary){display:none!important}
+.gs-fplus details>summary{pointer-events:none;list-style:none;font-weight:700;margin-top:6px}.gs-fplus details>summary::-webkit-details-marker{display:none}
+</style>
+<script src="visuels.js?v=3.0"></script>
+<script src="schema.js?v=3.0"></script>
+<script src="grun.js?v=3.0"></script><script src="motion.js?v=d5"></script>
+<script src="assistant.js?v=3.0"></script>
+<meta name="grun-module" content="saisons"></head><body><title>Saisons de référence · GRÜN</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Layout : barre fixe (retour, recherche) ; accueil = recherche, accès direct, 4 portes, favoris ; document = fil d'Ariane, sommaire, L'essentiel ouvert, Le détail en sections dépliables */
+:root{
+  --bg:#07090A; --panel:#111614; --ink:#F2F5F0; --mute:#9AA59E; --line:#263029; --soft:#1A211D; --mark:#4A5216;
+  --ui:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --read:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fs:17px; color-scheme:dark;
+  --p1:#B9A2FF; --p2:#7CC8FF; --p3:#E4FF3A; --p4:#3BE08A; --acc:#E4FF3A;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.45;margin:0;-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:var(--ink)}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.topin{max-width:1100px;margin:0 auto;padding-block:8px;padding-inline:16px;display:flex;gap:8px;align-items:center}
+.ib{min-width:40px;min-height:40px;border:1px solid var(--line);background:var(--panel);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-weight:600;padding:0 10px;white-space:nowrap}
+.brand{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:.01em;white-space:nowrap;text-decoration:none}
+.sbox{flex:1;min-width:0;position:relative}
+.sbox input{width:100%;min-height:40px;border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:0 12px 0 34px}
+.sbox svg{position:absolute;left:10px;top:11px;width:18px;height:18px;stroke:var(--mute)}
+main{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:16px 60px}
+h1{font-family:var(--display);font-weight:700;font-size:30px;line-height:1.1;margin:0;text-wrap:balance}
+.lead{color:var(--mute);margin:4px 0 0}
+.sec{margin-top:22px}
+.sec>h2{font-family:var(--display);font-size:21px;font-weight:700;margin:0 0 8px}
+.doors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:640px){.doors{grid-template-columns:minmax(0,1fr)}}
+.door{display:flex;flex-direction:column;gap:6px;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;border-top:4px solid var(--pc)}
+.door b{font-family:var(--display);font-size:24px;color:var(--pc);line-height:1.1}
+.door span{color:var(--mute);font-size:14px}
+.door small{color:var(--mute);font-size:12.5px}
+.quick{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.f label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+.f select{min-height:40px;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:0 8px;max-width:100%}
+.go{min-height:40px;border-radius:8px;border:none;background:var(--ink);color:var(--bg);font-weight:600;padding:0 16px}
+.list{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;padding:10px 14px;text-decoration:none;border-top:1px solid var(--line);align-items:baseline}
+.li:first-child{border-top:none}
+.li .code{font-variant-numeric:tabular-nums;color:var(--mute);font-size:13px}
+.li .tt{font-size:15px}
+.li .tt small{display:block;color:var(--mute);font-size:12.5px;margin-top:1px}
+.fold{margin-top:12px}
+.fold>h3{font-family:var(--display);font-size:19px;margin:16px 0 6px;color:var(--pc)}
+.crumb{font-size:13px;color:var(--mute);display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
+.crumb a{text-decoration:none;color:var(--pc);font-weight:600}
+.dochead{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:flex-start;margin-top:6px}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.star[aria-pressed=true]{color:#E4FF3A;border-color:#E4FF3A}
+.toc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:14px;font-size:14px}
+.toc b{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+.toc ol{margin:6px 0 0;padding-left:18px;columns:2;column-gap:28px}
+@media (max-width:640px){.toc ol{columns:1}}
+.toc a{text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.doc{font-family:var(--read);font-size:var(--fs);line-height:1.6;margin-top:10px}
+.doc p,.doc li{max-width:72ch}
+.doc h2{font-family:var(--display);font-size:1.35em;letter-spacing:.04em;margin:26px 0 8px;color:var(--pc)}
+.doc .ess{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--pc);border-radius:10px;padding:4px 18px 10px}
+.doc .ess h2{margin-top:12px}
+.doc details{border-top:1px solid var(--line);padding:2px 0}
+.doc summary{font-family:var(--ui);font-weight:600;font-size:1.02em;padding:10px 0;cursor:pointer;list-style:none;display:flex;gap:10px;align-items:baseline}
+.doc summary::-webkit-details-marker{display:none}
+.doc summary::before{content:"+";display:inline-block;width:1em;color:var(--pc);font-weight:700}
+.doc details[open]>summary::before{content:"–"}
+.doc h4{font-family:var(--ui);font-size:.98em;margin:16px 0 4px;color:var(--pc)}
+.doc h5,.doc h6{font-family:var(--ui);font-size:.92em;margin:12px 0 4px}
+.tw{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.doc table{border-collapse:collapse;font-family:var(--ui);font-size:.82em;line-height:1.4;min-width:100%}
+.doc th,.doc td{border-bottom:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+.doc th{background:var(--soft);font-weight:600}
+.doc blockquote{margin:10px 0;padding:6px 14px;border-left:3px solid var(--line);color:var(--mute)}
+.ref{color:var(--pc);font-weight:600;text-decoration:none;border-bottom:1px dotted currentColor}
+.bq,.ex{font-family:var(--ui);font-size:.82em;background:var(--soft);border-radius:5px;padding:1px 5px;white-space:nowrap}
+mark{background:var(--mark);color:inherit;border-radius:2px}
+.frw{overflow-x:auto;margin:10px 0 4px;background:#0C0F0D;border-radius:14px;border:1px solid #263029} .frise{display:block;min-width:720px;width:100%;height:auto}
+.leg{display:flex;flex-wrap:wrap;gap:4px 12px;font-family:var(--ui);font-size:12px;margin:4px 0} .leg span{display:inline-flex;align-items:center;gap:5px} .leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.lc{font-family:var(--ui);font-size:11px;font-weight:700;border-radius:5px;padding:1px 5px;margin-right:2px;white-space:nowrap} .lc.pp{color:#FF9F6B;background:#2A1A10} .lc.ge{color:#7CC8FF;background:#10202C} .lc.de{color:#3BE08A;background:#0F2A1C}
+.doc table.wk{width:100%;font-size:.86em} .doc table.wk td{padding:6px 8px} .doc table.wk td.sl{width:7.5em;border-left:4px solid var(--c)} .doc table.wk td.sl small{color:var(--mute);font-size:.86em}
+.doc tr.pp{--c:#FF9F6B} .doc tr.pp td{background:#1C1611} .doc tr.tb{--c:#7CC8FF} .doc tr.tb td{background:#111A1F} .doc tr.ten{--c:#9AA59E} .doc tr.ten td{background:#141916} .doc tr.pm{--c:#B9A2FF} .doc tr.pm td{background:#17151F}
+.doc tr.as{--c:#7CC8FF} .doc tr.as td{background:#111A1F} .doc tr.to{--c:#FF5C5C} .doc tr.to td{background:#1F1414} .doc tr.to td:last-child{font-weight:600}
+.wth{font-family:var(--ui);font-size:14px;margin:0 0 8px;color:var(--ink)} .wth b{font-family:var(--display);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:#E4FF3A;margin-right:6px}
+.doc tr td div{margin-top:3px} .doc b.tour{color:#FF5C5C}
+.doc h4{display:flex;flex-wrap:wrap;gap:6px;align-items:center} .chg{display:inline-flex;gap:2px;margin-left:4px} .chg b{width:9px;height:9px;border-radius:2px;border:1px solid var(--pc);display:inline-block} .chg b.on{background:var(--pc)}
+.wf{font-family:var(--ui);font-size:13px;margin:0 0 6px} .fl{border-radius:999px;padding:2px 8px;font-weight:600;font-size:12px;margin-right:4px} .fl.t{background:#2A1515;color:#FF6B6B} .fl.v{background:#262B0C;color:#E4FF3A} .fl.b{background:#0F2A1C;color:#3BE08A}
+.off{font-family:var(--ui);color:var(--mute);background:var(--soft);border-radius:8px;padding:8px 12px}
+.mo{font-family:var(--ui);font-size:14px;border-left:4px solid;background:var(--panel);border-radius:8px;padding:8px 12px;margin:8px 0}
+.stw{display:grid;grid-template-columns:repeat(7,minmax(90px,1fr));gap:6px;overflow-x:auto;margin:10px 0;font-family:var(--ui)} .std{display:flex;flex-direction:column;gap:5px} .std>b{text-align:center;font-size:13px}
+.stb{border-radius:8px;padding:8px 6px;font-size:12.5px;font-weight:600;border:1.5px solid} .stb.pp{color:#FF9F6B;background:#1C1611} .stb.tb{color:#7CC8FF;background:#111A1F} .stb.ten{color:#C9D2CC;background:#141916} .stb.pm{color:#B9A2FF;background:#17151F} .stb.rp{color:var(--mute);background:var(--soft);border-color:var(--line)}
+.jump{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px} .jump a,.jump button{font-size:13.5px;font-weight:600;text-decoration:none;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;cursor:pointer}
+.jump .now{background:var(--pc);border-color:var(--pc);color:#07090A}
+.doc details,.doc h4,.doc h5,.doc tr,.doc mark{scroll-margin-top:78px}
+.flash{animation:fl 1.6s ease}
+@keyframes fl{0%{background:var(--mark)}100%{background:transparent}}
+@media (prefers-reduced-motion: reduce){.flash{animation:none}}
+.pn{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:26px}
+.pn a{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-decoration:none;font-size:14px}
+.pn a small{display:block;color:var(--mute);font-size:12px}
+.pn a.nx{text-align:right}
+.notes{margin-top:22px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.notes textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);resize:vertical}
+.res{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;display:block}
+.res+.res{margin-top:8px}
+.res .t{font-weight:600}
+.res .w{color:var(--mute);font-size:12.5px}
+.res .s{font-family:var(--read);font-size:14.5px;margin-top:4px;color:var(--ink)}
+.empty{color:var(--mute);padding:14px;background:var(--panel);border:1px dashed var(--line);border-radius:12px}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+.msg{font-size:13.5px;color:var(--mute)}
+.load{padding:40px 0;color:var(--mute)}
+.stb small{display:block;font-weight:500;font-size:11px;opacity:.8;margin-top:2px}
+.std .stb{display:flex;flex-direction:column;justify-content:space-between}
+.wkgo{font-family:var(--ui);font-size:13.5px;margin:2px 0 12px} .wkgo a{color:var(--pc);font-weight:600;text-decoration:none;border-bottom:1px dotted currentColor}
+.basebar{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px} .basebar a{text-decoration:none}
+.go.bl{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+body.joueur .wkgo,body.joueur .basebar{display:none}
+.pjs{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.pj{display:flex;flex-direction:column;gap:2px;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--p3);border-radius:10px;padding:10px 12px;min-height:44px}
+.pj b{font-size:15px} .pj small{color:var(--mute);font-size:12.5px}
+.pjbar{margin-top:12px;font-size:14px;background:var(--soft);border-radius:10px;padding:8px 12px} .pjbar a{color:var(--pc);font-weight:600}
+/* frise visuelle de la saison (phases et semaines, touchables) */
+.tl{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 0 12px}
+.tlh{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;padding:0 14px}
+.tlh b{font-family:var(--display);font-size:20px}
+.tls{overflow-x:auto;padding:8px 14px 4px;scroll-padding:0 40px;-webkit-overflow-scrolling:touch}
+.tlg{display:grid;grid-auto-rows:auto;row-gap:4px;width:max-content}
+.tlM{grid-row:1;background:var(--ink);color:var(--bg);font-size:11.5px;font-weight:700;border-radius:6px;padding:3px 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-right:2px}
+.tlm{grid-row:2;border:none;color:#07090A;font-size:12px;font-weight:600;border-radius:6px;padding:4px 7px;min-height:30px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-right:2px;cursor:pointer}
+.tlw{grid-row:3;position:relative;height:64px;border:1px solid var(--line);background:var(--bg);border-radius:6px;margin-right:2px;padding:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;cursor:pointer;overflow:hidden}
+.tlw i{display:block;width:100%;background:var(--c);opacity:.9}
+.tlw span{position:absolute;top:3px;left:0;right:0;text-align:center;font-size:11px;font-weight:700;color:var(--ink)}
+.tlw.off{background:repeating-linear-gradient(135deg,var(--soft),var(--soft) 4px,var(--bg) 4px,var(--bg) 8px)}
+.tlw.now{box-shadow:0 0 0 2px var(--ink) inset}
+.tlw.sel{outline:3px solid var(--pc);outline-offset:1px;z-index:1}
+.tlw .tt{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:#FF5C5C}
+.tlw .bb{position:absolute;top:17px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;color:#07090A;background:#3BE08A;border-radius:4px;padding:0 3px}
+.tlmo{grid-row:4;font-size:11px;font-weight:700;color:var(--mute);white-space:nowrap}
+.tll{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;padding:4px 14px 0;color:var(--mute)} .tll span{display:inline-flex;align-items:center;gap:5px} .tll i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.tlc{margin:10px 14px 0;border:1px solid var(--line);border-left:4px solid var(--c,var(--pc));border-radius:10px;padding:10px 12px;background:var(--bg)}
+.tlc h3{font-family:var(--display);font-size:20px;margin:0;line-height:1.15}
+.tlc .ph{font-size:13.5px;color:var(--mute);margin:2px 0 6px}
+.tlc .tw{margin:6px 0}
+.tlc .tools{margin-top:8px}
+.doc details.frd{border:none} .doc details.frd>summary{font-size:.92em;color:var(--mute)}
+@media print{.top,.wkgo,.basebar,.notes,.pn,.jump,.pjbar,.tl{display:none!important}}
+/* ===== GRÜN · design E « Night court » (refonte, étape 1, 20 oct. 2026) : UN seul thème, sombre, quel que soit le réglage de l'appareil =====
+   Fond #07090A · cartes #111614 bord #263029 · champs #1A211D · texte #F2F5F0 / #9AA59E · accent jaune balle #E4FF3A · vert #3BE08A.
+   Titres : Barlow Condensed 800 capitales espacées ; texte : Barlow. Boutons ≥ 44 px ; pas d'ombre lourde, pas de dégradé. */
+html{color-scheme:dark;background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui)}
+::selection{background:#E4FF3A;color:#07090A}
+:focus-visible{outline:2px solid #E4FF3A;outline-offset:2px}
+h1{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em;line-height:1.02}
+h2,h3{font-family:var(--display)}
+.sec>h2{font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:.14em;color:var(--mute)}
+.lead{color:var(--mute)}
+.top{background:#07090A;border-bottom:1px solid #1A211D}
+.brand{font-family:var(--display);font-weight:800;font-size:17px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink);overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ib,.btn{min-height:44px;min-width:44px;border-radius:22px;background:#111614;border:1px solid #263029;color:var(--ink);padding-inline:14px}
+.ib:hover,.btn:hover{background:#1A211D}
+a.ib,a.btn,a.go{text-decoration:none}
+.btn.sm{min-height:38px;border-radius:19px}
+.go,.btn.pri,.lk.pri{min-height:44px;border-radius:22px;background:#E4FF3A;color:#07090A;border:1px solid #E4FF3A;font-weight:700}
+.go:hover,.btn.pri:hover{background:#F0FF8A}
+.go:disabled,.btn.pri:disabled{opacity:.5}
+.sbox input{min-height:44px;border-radius:22px;background:#1A211D;border:1px solid #263029;color:var(--ink)}
+.sbox input::placeholder{color:#9AA59E}
+.sbox svg{top:13px;stroke:#9AA59E}
+input,select,textarea{color:var(--ink);accent-color:#E4FF3A}
+input::placeholder,textarea::placeholder{color:#7F8A83}
+input[type=text],input[type=search],input[type=number],input[type=date],input[type=url],input[type=email],input[type=tel],select,textarea{background-color:#1A211D;border-color:#263029}
+.crumb{color:var(--mute)}
+.crumb a{color:var(--pc,#E4FF3A)}
+.empty{background:#111614;border:1px dashed #263029;border-radius:18px;color:var(--mute)}
+.msg{color:var(--mute)}
+.door,.list,.res,.toc,.notes,.quick,.lines,.resume,.e30,.pcx,.card,.fiche,.form,.filters,.fam,.intro,.prop,.box,.pn a,.steps a{border-radius:18px;border-color:#263029;box-shadow:none}
+.door b,.pcx b{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.fold>h3{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:16px}
+.chip,.tab,.lk,.pill{border-color:#263029}
+.ref{color:var(--pc,#E4FF3A)}
+mark{background:var(--mark);color:#F2F5F0}
+.star[aria-pressed=true]{color:#E4FF3A;border-color:#E4FF3A}
+.modal{background:rgba(7,9,10,.78)}
+table{color:var(--ink)}
+/* Référentiel · design E */
+.door,.doc .ess,.pj,.mo,.tlc,.resume{border-width:1px;border-style:solid;border-color:#263029}
+.mo{box-shadow:inset 3px 0 0 currentColor}
+.door{padding:16px 18px} .door b{font-size:22px}
+.dochead h1,main>h1{font-size:28px}
+.doc{font-family:var(--ui);font-size:17px;line-height:1.65}
+.doc h2{font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:1.1em}
+.doc .ess{border-radius:18px;padding:6px 20px 12px}
+.doc th{background:#1A211D;color:var(--ink)}
+.doc table.wk td.sl{border-left-width:3px}
+.tw{border-radius:14px;border-color:#263029;background:#111614}
+.toc b,.f label{letter-spacing:.14em;font-family:var(--display);font-size:12.5px}
+.f select{min-height:44px;border-radius:12px;background:#1A211D}
+.bq,.ex{background:#1A211D;color:var(--ink);white-space:normal;overflow-wrap:anywhere}
+.res .s{font-family:var(--ui)}
+.jump a,.jump button{background:#111614;border-color:#263029;border-radius:18px;min-height:36px;display:inline-flex;align-items:center}
+.stb{border-radius:12px}
+.pj{border-radius:16px;box-shadow:inset 3px 0 0 var(--p3)}
+.leg i{border:1px solid #263029}
+.lc:empty{display:none}
+.pjbar{background:#111614;border:1px solid #263029;border-radius:14px}
+.tl{border-radius:20px}
+.tlh b{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:18px}
+.tlM{background:#1A211D;color:var(--ink);border:1px solid #263029}
+.tlm{border-radius:8px}
+.tlw{border-radius:8px;background:#0C0F0D}
+.tlw.now{box-shadow:0 0 0 2px #E4FF3A inset}
+.tlw.sel{outline-color:#E4FF3A}
+.tlc{border-radius:16px;background:#0C0F0D;box-shadow:inset 3px 0 0 var(--c,var(--pc))}
+.tlc h3{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.off{background:#111614;border:1px solid #263029;border-radius:14px}
+.notes textarea{background:#1A211D;border-color:#263029;border-radius:12px}
+@media print{:root{--bg:#FFFFFF;--panel:#FFFFFF;--ink:#16202E;--mute:#5D6675;--line:#D9DDE3;--soft:#F1F3F5;--mark:#FFE58A;color-scheme:light} html,body{background:#fff!important;color:#16202E} .top{display:none}}
+/* VÉRIF E1 : couleurs de période écrites dans les documents (texte et liseré) remises dans la palette sombre, lisibles (≥ 4,5:1) ; à l'impression, les couleurs d'origine */
+@media screen{
+#main [style*="color:#0F766E"]{color:#3BE08A!important}#main [style*="color:#1D4ED8"]{color:#7CC8FF!important}#main [style*="color:#7C3AED"]{color:#B9A2FF!important}#main [style*="color:#B91C1C"]{color:#FF9F6B!important}#main [style*="color:#0369A1"]{color:#C9D2CC!important}#main [style*="color:#94A3B8"]{color:#9AA59E!important}
+#main [style*="solid #0F766E"]{border-left-color:#3BE08A!important}#main [style*="solid #1D4ED8"]{border-left-color:#7CC8FF!important}#main [style*="solid #7C3AED"]{border-left-color:#B9A2FF!important}#main [style*="solid #B91C1C"]{border-left-color:#FF9F6B!important}#main [style*="solid #0369A1"]{border-left-color:#C9D2CC!important}#main [style*="solid #94A3B8"]{border-left-color:#8A968F!important}}
+/*VX-CSS-DEBUT*/
+/* ===== GRÜN · E1B « design intérieur imagé » (maquettes F1-F6 validées le 20 oct. 2026) — bloc commun, IDENTIQUE dans les 7 modules
+   (veille, banque, saisons, grilles, programmation, seances, routines) : héros, cartes illustrées, cartes d'exercice, pastilles, onglets segmentés,
+   « L'essentiel » numéroté. Visuels : window.GRUN_VIS (apps/grun/visuels.js). Source unique : RAPPORT_E1B_MODULES.md. ===== */
+:root{--vx-hd:61px}
+#vxh[hidden]{display:none!important}
+.vx-hero{position:relative;margin-top:calc(-1 * var(--vx-hd));padding-top:var(--vx-hd);min-height:calc(var(--vx-hd) + 180px);display:flex;align-items:flex-end;overflow:hidden;background:#07090A}
+.vx-hero.bas{min-height:calc(var(--vx-hd) + 128px)}
+.vx-vis{position:absolute;top:calc(var(--vx-hd) - 12px);right:0;bottom:6px;width:min(60%,520px);pointer-events:none}
+.vx-hero.large .vx-vis{top:calc(var(--vx-hd) - 24px);bottom:0;width:100%;max-width:none}
+.vx-hero.large:not(.bas){min-height:calc(var(--vx-hd) + 236px)} /* vérif E1B : place pour le visuel au-dessus du texte (le visuel s'efface derrière le texte, cf. G.heroDegager) */
+.vx-hero.bas .vx-vis{width:min(48%,400px)}
+.vx-vis svg{display:block;width:100%;height:100%}
+/* petits visuels (cartes, outils) : posés en haut à droite, au-dessus du titre (jamais sous le texte) */
+.vx-hero:not(.large):not(.sq){padding-top:calc(var(--vx-hd) + 98px);min-height:0}
+.vx-hero:not(.large):not(.sq) .vx-vis{top:calc(var(--vx-hd) - 8px);bottom:auto;height:108px;width:min(60%,380px)}
+.vx-hero.bas:not(.large):not(.sq){padding-top:calc(var(--vx-hd) + 70px)}
+.vx-hero.bas:not(.large):not(.sq) .vx-vis{height:78px}
+.vx-hero.sq{padding-top:calc(var(--vx-hd) + 128px)}
+.vx-hero.sq .vx-vis{left:max(16px,calc(50% - 534px));right:auto;top:calc(var(--vx-hd) + 2px);bottom:auto;width:112px;height:112px;border-radius:24px;background:#0B1A14;border:1px solid #1A2E24;overflow:hidden}
+.vx-in{position:relative;width:100%;max-width:1100px;margin:0 auto;padding:0 16px 18px;box-sizing:border-box}
+.vx-txt{display:flex;flex-direction:column;gap:8px;max-width:820px;text-shadow:0 0 3px #07090A,0 0 16px #07090A}
+.vx-lab{font:600 13px/1.25 var(--display,"Barlow Condensed",sans-serif);letter-spacing:.22em;text-transform:uppercase;color:#3BE08A}
+.vx-hero h1.vx-h{font-family:var(--display,"Barlow Condensed",sans-serif);font-weight:800;font-size:46px;line-height:.92;letter-spacing:.01em;text-transform:uppercase;color:#F2F5F0;margin:0;text-wrap:balance;overflow-wrap:normal}
+.vx-hero h1.vx-h.l2{font-size:34px;line-height:.95}
+.vx-hero h1.vx-h.l3{font-size:27px;line-height:1}
+.vx-hrow{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.vx-hrow .vx-h{min-width:0}
+.vx-num{flex:0 0 auto;font:700 22px/1 var(--display,"Barlow Condensed",sans-serif);color:#E4FF3A;letter-spacing:.02em;padding-bottom:3px;white-space:nowrap}
+.vx-sous{margin:0;font:400 14px/1.4 var(--ui,"Barlow",sans-serif);color:#9AA59E;max-width:60ch}
+.vx-sous b{font:700 18px/1 var(--display,"Barlow Condensed",sans-serif);color:#E4FF3A;letter-spacing:.02em}
+@media (min-width:700px){.vx-hero{min-height:calc(var(--vx-hd) + 200px)}.vx-hero.bas{min-height:calc(var(--vx-hd) + 140px)}.vx-hero h1.vx-h{font-size:52px}.vx-hero h1.vx-h.l2{font-size:40px}.vx-hero h1.vx-h.l3{font-size:32px}.vx-in{padding-bottom:22px}}
+/* barre du haut posée sur le héros : transparente en haut de page, pleine dès qu'on fait défiler ; le titre du module revient alors */
+body.vx-on .top{background:transparent;border-bottom-color:transparent;transition:background-color .18s,border-color .18s}
+body.vx-on.vx-sc .top{background:#07090A;border-bottom-color:#1A211D}
+body.vx-on:not(.vx-sc) .top .brand{visibility:hidden}
+body.vx-on #main{padding-top:14px}
+/* cartes illustrées (F2, F3, F6) */
+.vx-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.vx-c{position:relative;display:block;overflow:hidden;box-sizing:border-box;min-height:172px;border-radius:22px;background:#111614;border:1px solid #263029;color:#F2F5F0;text-decoration:none;text-align:left;font:inherit;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,background-color .12s}
+.vx-c:hover{background:#141A17}
+.vx-c:active{transform:scale(.985)}
+.vx-c.big,.vx-c.row,.vx-c.full{grid-column:1/-1}
+.vx-c.big{min-height:150px}
+.vx-cv{position:absolute;left:0;top:0;width:100%;height:104px;display:block}
+.vx-cv svg{display:block;width:100%;height:100%}
+.vx-c.big .vx-cv{height:100%}
+.vx-ct{position:absolute;left:16px;right:12px;bottom:14px;display:flex;flex-direction:column;gap:4px}
+.vx-c.big .vx-ct{left:18px;bottom:16px;max-width:62%}
+.vx-n{font:600 12px/1 var(--display,"Barlow Condensed",sans-serif);letter-spacing:.22em;color:#3BE08A}
+.vx-t{font-family:var(--display,"Barlow Condensed",sans-serif);font-weight:800;font-size:24px;line-height:.98;text-transform:uppercase;letter-spacing:.01em;overflow-wrap:normal;word-break:normal}
+.vx-c.big .vx-t,.vx-c.row .vx-t{font-size:26px}
+.vx-s{font:400 13px/1.35 var(--ui,"Barlow",sans-serif);color:#9AA59E;text-transform:none;letter-spacing:0}
+.vx-s b{font:700 17px/1 var(--display,"Barlow Condensed",sans-serif);color:#F2F5F0}
+.vx-c.row{min-height:124px;display:flex;align-items:center}
+.vx-c.row .vx-ct{position:static;flex:1 1 auto;min-width:0;padding:16px 8px 16px 18px}
+.vx-c.row .vx-cv{position:relative;flex:0 0 120px;width:120px;height:124px;align-self:stretch}
+.vx-c.mini{min-height:132px}.vx-c.mini .vx-cv{height:84px}.vx-c.mini .vx-t{font-size:21px}
+.vx-cards.c3m{grid-template-columns:repeat(3,minmax(0,1fr))}
+.vx-cards.c3m .vx-c{min-height:132px}.vx-cards.c3m .vx-cv{height:76px}.vx-cards.c3m .vx-ct{left:12px;right:8px;bottom:12px}.vx-cards.c3m .vx-t{font-size:19px}.vx-cards.c3m .vx-s{font-size:12px}
+.vx-c.on{border-color:#E4FF3A;box-shadow:inset 0 0 0 1px #E4FF3A}
+@media (min-width:700px){.vx-cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.vx-cards.c2{grid-template-columns:repeat(2,minmax(0,1fr))}.vx-cards.c3{grid-template-columns:repeat(3,minmax(0,1fr))}.vx-c{min-height:190px}.vx-cv{height:128px}.vx-c.big{min-height:170px}.vx-c.row{min-height:128px}.vx-c.mini{min-height:150px}.vx-c.mini .vx-cv{height:96px}}
+/* carte d'exercice (F5) : mini-schéma 84×84 à gauche, nom, « durée · joueurs · matériel » */
+.vx-exs{display:flex;flex-direction:column;gap:10px}
+@media (min-width:900px){.vx-exs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+.vx-ex{position:relative;display:flex;align-items:center;gap:14px;min-height:104px;box-sizing:border-box;padding:10px 12px 10px 10px;border-radius:20px;background:#111614;border:1px solid #263029;color:#F2F5F0;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.vx-ex:hover{background:#141A17}
+.vx-ex:active{transform:scale(.99)}
+.vx-ex .vx-mini{flex:0 0 84px;width:84px;height:84px;border-radius:14px;background:#0B1A14;display:block}
+.vx-ex .vx-et{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 auto}
+.vx-ex .vx-et b{font:600 17px/1.2 var(--ui,"Barlow",sans-serif);overflow-wrap:break-word}
+.vx-ex .vx-et small{font-size:13px;line-height:1.35;color:#9AA59E}
+.vx-ex.cmp{min-height:72px;padding:6px 10px 6px 6px;gap:12px}.vx-ex.cmp .vx-mini{flex-basis:58px;width:58px;height:58px;border-radius:12px}.vx-ex.cmp .vx-et b{font-size:15.5px}
+/* pastilles (actif jaune) et sous-filtres soulignés (F5) */
+.vx-pills,.vx-subs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 0}
+.vx-pills::-webkit-scrollbar,.vx-subs::-webkit-scrollbar{display:none}
+.vx-pill{flex:0 0 auto;min-height:36px;padding:0 14px;border-radius:18px;border:1px solid #263029;background:transparent;display:inline-flex;align-items:center;gap:6px;font-family:var(--display,"Barlow Condensed",sans-serif);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:#9AA59E;white-space:nowrap;text-decoration:none;cursor:pointer}
+.vx-pill:hover{color:#F2F5F0}
+.vx-pill[aria-pressed=true],.vx-pill[aria-selected=true],.vx-pill[aria-current=page],.vx-pill.on{background:#E4FF3A;border-color:#E4FF3A;color:#07090A}
+.vx-subs{gap:18px}
+.vx-sub{flex:0 0 auto;min-height:36px;padding:6px 0 4px;border:0;border-bottom:2px solid transparent;border-radius:0;background:none;font:400 15px/1.2 var(--ui,"Barlow",sans-serif);color:#9AA59E;white-space:nowrap;text-decoration:none;cursor:pointer}
+.vx-sub:hover{color:#F2F5F0}
+.vx-sub[aria-pressed=true],.vx-sub[aria-current=page],.vx-sub.on{color:#F2F5F0;font-weight:600;border-bottom-color:#E4FF3A}
+/* onglets en segment arrondi, actif jaune (F4) */
+.vx-seg{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:2px;background:#111614;border:1px solid #263029;border-radius:22px;padding:4px;margin:0 0 14px}
+.vx-seg>a,.vx-seg>button{min-height:38px;border:0;border-radius:18px;background:transparent;color:#9AA59E;display:flex;align-items:center;justify-content:center;padding:0 8px;font-family:var(--display,"Barlow Condensed",sans-serif);font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.vx-seg.scroll{grid-auto-columns:max-content;overflow-x:auto;scrollbar-width:none;justify-content:start}
+.vx-seg.scroll::-webkit-scrollbar{display:none}
+.vx-seg.scroll>a,.vx-seg.scroll>button{padding:0 14px}
+.vx-seg>[aria-current=page],.vx-seg>[aria-selected=true],.vx-seg>[aria-pressed=true]{background:#E4FF3A;color:#07090A}
+/* « L'essentiel » en carte, points numérotés 01, 02… en vert (F4) */
+.vx-ess{background:#111614;border:1px solid #263029;border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.vx-lt{font-family:var(--display,"Barlow Condensed",sans-serif);font-weight:700;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:#E4FF3A}
+.vx-pt{display:flex;gap:12px;align-items:baseline}
+.vx-pt>i{flex:0 0 auto;min-width:28px;font:normal 800 22px/1 var(--display,"Barlow Condensed",sans-serif);color:#3BE08A}
+.vx-pt>span{font-size:15px;line-height:1.45}
+ol.vx-nl,ul.vx-nl{list-style:none;margin:4px 0 6px;padding:0;counter-reset:vxn;display:flex;flex-direction:column;gap:12px}
+ol.vx-nl>li,ul.vx-nl>li{counter-increment:vxn;position:relative;padding-left:42px;margin:0;max-width:72ch}
+ol.vx-nl>li::before,ul.vx-nl>li::before{content:counter(vxn,decimal-leading-zero);position:absolute;left:0;top:0;font:800 22px/1.15 var(--display,"Barlow Condensed",sans-serif);color:#3BE08A}
+/* intertitres en capitales condensées (F4) */
+.vx-sh,.sec>h2{font-family:var(--display,"Barlow Condensed",sans-serif);font-weight:800;font-size:20px;letter-spacing:.04em;text-transform:uppercase;color:#F2F5F0;margin:0 0 10px}
+.sec>h2 small{font-family:var(--ui,"Barlow",sans-serif);font-weight:500;font-size:13px;letter-spacing:0;text-transform:none;color:#9AA59E;margin-left:6px}
+.vx-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.vx-sec{margin-top:22px}
+@media print{#vxh{display:none!important}}
+/*VX-CSS-FIN*/
+/* Référentiel · E1B : saisons en cartes, chiffres mis en scène, frise et calendrier soignés */
+.vpj{display:flex;margin-bottom:12px;border-radius:20px;padding:14px 16px;box-shadow:inset 3px 0 0 #E4FF3A}
+.vpj small{color:#9AA59E}.vpj b{font-size:16px}
+.vdoors+.sec{margin-top:22px}
+.list{background:none;border:0;border-radius:0;overflow:visible;display:flex;flex-direction:column;gap:8px}
+.li{background:#111614;border:1px solid #263029;border-radius:18px;padding:14px 16px;align-items:center}
+.li .tt{font-weight:600}
+.fold>h3{font-weight:800;font-size:18px;letter-spacing:.06em;color:#F2F5F0;margin:22px 0 10px}
+.agecs{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:10px}
+.agec{position:relative;display:flex;align-items:baseline;gap:4px;flex-wrap:wrap;min-height:96px;padding:12px 14px;border-radius:20px;background:#111614;border:1px solid #263029;text-decoration:none;color:#F2F5F0;overflow:hidden}
+.agec:hover{background:#141A17}
+.agec b{font:800 44px/1 var(--display);letter-spacing:-.01em}
+.agec span{font:700 14px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:#9AA59E}
+.agec small{flex-basis:100%;font:600 12px/1 var(--display);letter-spacing:.2em;text-transform:uppercase;color:var(--pc,#3BE08A);margin-top:6px}
+.vacts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.vacts .star{min-height:40px;border-radius:20px;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:14px}
+.jump{margin-top:0}
+.jump a,.jump button{min-height:38px;border-radius:19px;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:14px;padding:0 14px}
+.jump .now{background:#E4FF3A;border-color:#E4FF3A;color:#07090A}
+.pjbar{margin-top:12px}
+/* frise de la saison */
+.tl{margin-top:16px;border-radius:22px;padding:16px 0 14px}
+.tlh{padding:0 16px;gap:4px 12px}
+.tlh b{font-size:20px}
+.tls{padding:12px 16px 6px}
+.tlg{row-gap:6px}
+.tlM{border-radius:10px;padding:5px 9px;font-family:var(--display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px;background:#1A211D;border:0}
+.tlm{border-radius:10px;min-height:34px;font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.04em;padding:0 9px}
+.tlw{height:78px;border-radius:9px;border-color:#1F2823;background:#0C0F0D;margin-right:3px}
+.tlw i{border-radius:5px 5px 0 0;opacity:.95}
+.tlw span{top:5px;font-family:var(--display);font-size:12px;color:#C9D2CC}
+.tlw.now span{color:#E4FF3A}
+.tlw.sel{outline:2px solid #E4FF3A;outline-offset:2px}
+.tlmo{font-family:var(--display);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:11.5px;padding-top:2px}
+.tll{padding:8px 16px 0;gap:6px 14px}
+.tll i{width:12px;height:12px;border-radius:4px}
+.tlc{margin:14px 16px 0;border-radius:18px;padding:14px 16px}
+.tlc h3{font-size:22px}
+/* calendrier de la semaine type et des semaines (blocs colorés) */
+.stw{gap:8px}
+.std>b{font-family:var(--display);font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:12.5px;color:#9AA59E}
+.stb{border:0;border-radius:12px;padding:10px 9px;min-height:58px;font-size:13px}
+.stb.pp{background:#2A1D14;box-shadow:inset 3px 0 0 #FF9F6B}.stb.tb{background:#12222D;box-shadow:inset 3px 0 0 #7CC8FF}.stb.ten{background:#18201B;box-shadow:inset 3px 0 0 #C9D2CC}.stb.pm{background:#1D1A2B;box-shadow:inset 3px 0 0 #B9A2FF}
+.stb.rp{background:#111614;box-shadow:none;border:1px dashed #263029}
+.stb.as{background:#12222D;box-shadow:inset 3px 0 0 #7CC8FF}.stb.to{background:#2A1515;box-shadow:inset 3px 0 0 #FF5C5C}
+.doc table.wk td.sl{border-left-width:3px}
+.doc h2{font-weight:800;font-size:20px;letter-spacing:.04em;color:#F2F5F0}
+.doc summary{font-family:var(--display);font-weight:700;font-size:18px;text-transform:uppercase;letter-spacing:.03em;min-height:44px;align-items:center}
+.doc .ess{border-radius:22px;background:#111614;border:1px solid #263029;padding:16px 18px 10px}
+.doc .ess>h2:first-child{font-size:13px;font-weight:700;letter-spacing:.22em;color:#E4FF3A;margin:0 0 10px}
+.doc table{font-size:15px}
+.doc th{font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px;color:#9AA59E}
+
+/* audit 26 oct. (0 débordement) : boutons longs de « Plus d'options » reviennent à la ligne */
+.grun-plusb .ib{max-width:100%;white-space:normal;text-align:center;height:auto;padding-block:6px}
+</style>
+
+<header class="top"><div class="topin">
+  <button class="ib" id="back" type="button" aria-label="Retour">‹</button>
+  <a class="brand" href="#">Référentiel</a>
+  <div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Rechercher dans les saisons" autocomplete="off" enterkeyhint="search"></div>
+</div></header>
+<div id="vxh" hidden></div>
+<main id="main"><div class="load">Chargement des saisons…</div></main>
+
+<!--VX-DEBUT--><script>
+/* GRÜN · E1B — héros et cartes illustrées : bloc commun, IDENTIQUE dans les 7 modules (window.VX). Visuels : window.GRUN_VIS (visuels.js, chargé avant). */
+(function(){
+  "use strict";
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const V = () => window.GRUN_VIS || null;
+  const svg = (nom, o) => { const v = V(); return v && nom ? v.svg(nom, o || {}) : ""; };
+  const top = () => document.querySelector("header.top");
+  const box = () => document.getElementById("vxh");
+  let raf = 0;
+  function maj(){ const t = top(); if(t && t.offsetHeight) document.documentElement.style.setProperty("--vx-hd", t.offsetHeight + "px"); }
+  function sc(){ const h = box(), t = top(); const on = !h || h.hidden || scrollY > Math.max(8, h.offsetHeight - (t ? t.offsetHeight : 0) - 56); document.body.classList.toggle("vx-sc", on); }
+  addEventListener("scroll", () => { if(!raf) raf = requestAnimationFrame(() => { raf = 0; sc(); }); }, {passive:true});
+  addEventListener("resize", () => { maj(); sc(); });
+  /* titres des cartes et du héros : jamais coupés au milieu d'un mot ; si la police (de secours) est trop large, la taille baisse jusqu'à tenir */
+  function fit(){ document.querySelectorAll(".vx-t,.vx-h").forEach(el => { el.style.fontSize = ""; let fs = parseFloat(getComputedStyle(el).fontSize), n = 0;
+    while(el.scrollWidth > el.clientWidth + 1 && fs > 14 && n++ < 16){ fs -= 1.5; el.style.fontSize = fs + "px"; } }); }
+  let rf = 0; const plan = () => { if(!rf) rf = requestAnimationFrame(() => { rf = 0; fit(); }); };
+  function obs(){ const mo = new MutationObserver(plan); ["main", "vxh"].forEach(id => { const e = document.getElementById(id); if(e) mo.observe(e, {childList: true, subtree: true}); }); plan();
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(plan); }
+  addEventListener("resize", plan);
+  const taille = t => { const n = String(t || "").length; return n > 64 ? " l3" : n > 22 ? " l2" : ""; };
+  const VX = {
+    esc, svg,
+    pour: k => { const v = V(); return v ? v.pour(k) : "balles"; },
+    n2: i => String(i).padStart(2, "0"),
+    /* héros (bandeau imagé) : {vis, lab, titre, num (chiffre jaune à droite du titre), sous (html), bas (écran profond), large (visuel pleine largeur), sq (mini-schéma agrandi en vignette), par} ; VX.hero(null) le retire */
+    hero(o){ const h = box(); if(!h) return;
+      if(!o){ if(!h.hidden){ h.hidden = true; h.innerHTML = ""; } document.body.classList.remove("vx-on"); sc(); return; }
+      maj();
+      h.className = "vx-hero" + (o.bas ? " bas" : "") + (o.large ? " large" : "") + (o.sq ? " sq" : "");
+      h.innerHTML = `${o.vis ? `<div class="vx-vis">${svg(o.vis, {par: o.par || (o.large ? "xMaxYMax slice" : "xMaxYMid meet")})}</div>` : ""}<div class="vx-in"><div class="vx-txt">${o.lab ? `<span class="vx-lab">${esc(o.lab)}</span>` : ""}${o.num != null ? `<div class="vx-hrow"><h1 class="vx-h${taille(o.titre)}">${esc(o.titre)}</h1><span class="vx-num">${esc(o.num)}</span></div>` : `<h1 class="vx-h${taille(o.titre)}">${esc(o.titre)}</h1>`}${o.sous ? `<p class="vx-sous">${o.sous}</p>` : ""}</div></div>`;
+      h.hidden = false; document.body.classList.add("vx-on"); sc();
+      requestAnimationFrame(() => { maj(); sc(); }); },
+    /* carte illustrée : {href | (attrs + bouton), vis, n (numéro), t (titre), s (sous-titre html), k : "big" | "row" | "mini" | "", cls, attrs, par} */
+    carte(o){ const k = o.k || "", par = o.par || (k === "big" ? "xMaxYMid meet" : k === "row" ? "xMinYMid slice" : "xMidYMid meet"), tag = o.href ? "a" : "button";
+      return `<${tag} class="vx-c${k ? " " + k : ""}${o.cls ? " " + o.cls : ""}" ${o.href ? `href="${esc(o.href)}"` : `type="button"`}${o.attrs ? " " + o.attrs : ""}><span class="vx-cv">${svg(o.vis, {par})}</span><span class="vx-ct">${o.n != null ? `<span class="vx-n">${esc(o.n)}</span>` : ""}<span class="vx-t">${esc(o.t)}</span>${o.s ? `<span class="vx-s">${o.s}</span>` : ""}</span></${tag}>`; },
+    /* carte d'exercice (F5) : {href, id (préfixe → mini-schéma), nom, meta (html), extra (html), cls, attrs} */
+    ex(o){ return `<a class="vx-ex${o.cls ? " " + o.cls : ""}" href="${esc(o.href)}"${o.attrs ? " " + o.attrs : ""}>${svg(VX.pour(o.id), {w: 84, h: 84, cls: "vx-mini"})}<span class="vx-et"><b>${o.nomHtml != null ? o.nomHtml : esc(o.nom)}</b>${o.meta ? `<small>${o.meta}</small>` : ""}</span>${o.extra || ""}</a>`; },
+    /* « L'essentiel » numéroté : [texte html, …] */
+    fit,
+    ess(titre, pts){ return `<section class="vx-ess"><span class="vx-lt">${esc(titre)}</span>${pts.map((p, i) => `<div class="vx-pt"><i>${VX.n2(i + 1)}</i><span>${p}</span></div>`).join("")}</section>`; }
+  };
+  window.VX = VX;
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => { maj(); obs(); }); else { maj(); obs(); }
+})();
+</script><!--VX-FIN-->
+<script>
+"use strict";
+const PORTES = {
+  "1": {n:"Filles", c:"--p1", s:"Les saisons de référence filles de __A__, rangées par étape : frise, périodes, chaque semaine et le thème de chaque séance."},
+  "2": {n:"Garçons", c:"--p2", s:"Les saisons de référence garçons de __A__, rangées par étape : frise, périodes, chaque semaine et le thème de chaque séance."},
+  "3": {n:"Comprendre les saisons", c:"--p3", s:"Les six étapes, le calendrier de la saison type, les semaines types de chaque âge, les périodes et la dureté, les garde-fous."}
+};
+const GR = window.GRUN || null;
+const normCode = c => { const m=/^([FG])(\d{1,2})$/i.exec(c||""); return m ? m[1].toUpperCase()+String(+m[2]).padStart(2,"0") : c; };
+const progHref = (code, w, jid) => (GR ? GR.href("prog","#/nouveau/"+(jid||"")) : "prog.html#/nouveau/"+(jid||"")) + "?base="+code + (w?"&w="+w:"");
+/* joueurs de GRÜN : la saison de leur âge (4-18 ans ; au-delà de 18 ans, la saison 18 ans) et de leur sexe */
+const JR = () => { try{ if(!GR||!GR.joueurs) return [];
+  if(GR.isJoueur()){ const j=GR.joueurs.get(GR.mode().jid); return j?[j]:[]; }
+  if(GR.isAutonome&&GR.isAutonome()&&GR.moi()){ const j=GR.joueurs.get(GR.moi()); if(j) return [j]; }
+  return GR.joueurs.all(); }catch(e){ return []; } };
+const jAge = j => { const a = GR&&j&&j.naissance ? GR.ageCiv(j.naissance) : null; return a==null ? null : Math.max(4, Math.min(18, a)); };
+const jCode = j => { const a=jAge(j); return a!=null && /^[FG]$/.test(j.sexe||"") ? normCode(j.sexe+a) : null; };
+const jGet = id => { try{ return id&&GR&&GR.joueurs ? GR.joueurs.get(id) : null; }catch(e){ return null; } };
+/* joueur ou groupe EN COURS (choisi une fois dans GRÜN) : la saison s'ouvre pour lui */
+const cour = () => { try{ return GR&&GR.courant ? GR.courant.get() : null; }catch(e){ return null; } };
+const prenom = j => String(j&&j.nom||"").split(" ")[0];
+/* saison d'un groupe : sexe le plus fréquent, âge médian de ses joueurs */
+function gCode(gid){ try{ const js = GR.groupes.joueurs(gid).filter(j=>jCode(j)); if(!js.length) return null;
+  const f = js.filter(j=>j.sexe==="F").length, sx = f*2 >= js.length ? (f*2===js.length ? js[0].sexe : "F") : "G";
+  const as = js.map(jAge).sort((a,b)=>a-b); return normCode(sx + as[Math.floor(as.length/2)]); }catch(e){ return null; } }
+const gGet = id => { try{ return id&&GR&&GR.groupes ? GR.groupes.get(id) : null; }catch(e){ return null; } };
+function titre(t){ document.title = t ? t+" · Référentiel" : "Saisons de référence · Référentiel"; }
+function actbar(t, id, href){ return `<div class="grun-actbar">${href?`<a class="gs-btn main" id="${id}" href="${href}">${esc(t)}</a>`:`<button class="gs-btn main" id="${id}" type="button">${esc(t)}</button>`}</div>`; }
+let AGES = [], MESOC = {}, PREM = true;
+let CALW = [];
+const pad2 = n => String(n).padStart(2,"0");
+function curWeek(){ const t=new Date().toISOString().slice(0,10); const w=CALW.find(x=>x.du<=t&&t<=x.au); if(w) return w.n; return CALW.length&&t<CALW[0].du?1:52; }
+const MOISC=["janv.","févr.","mars","avril","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+const dd = s => { const d=new Date(s+"T12:00:00"); return d.getDate()+" "+MOISC[d.getMonth()]; };
+
+
+let DOCS = [], BY = {}, NORM = null, JID = null, GID = null, SEL = null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fold = s => { let o=""; for(const ch of s){ const d=ch.normalize("NFD")[0]; o += (d||ch).toLowerCase(); } return o; };
+const keyc = c => c.split(".").map(Number);
+
+/* ---------- préférences locales ---------- */
+const ST = "saisons_v1";
+function load(){ try{ return JSON.parse(localStorage.getItem(ST)) || {}; }catch(e){ return {}; } }
+let P = Object.assign({fav:[], rec:[], notes:{}, fs:17, sx:"G", age:"14"}, load());
+function save(){ try{ localStorage.setItem(ST, JSON.stringify(P)); }catch(e){} }
+document.documentElement.style.setProperty("--fs", P.fs+"px");
+
+/* ---------- données ---------- */
+async function boot(){
+  try{
+    const r = await fetch("data-saisons.json"); const d = await r.json();
+    DOCS = d.docs; CALW = d.cal||[]; MESOC = d.meso||{}; DOCS.forEach((x,i)=>{ x.i=i; BY[x.c]=x; if(x.d==="La méthode") x.d = PORTES["3"].n; });   /* audit 26 oct. : « La méthode » → « Repères de la saison type » (≠ Fonctionnement de la méthode) */
+    AGES = [...new Set(DOCS.filter(x=>x.age).map(x=>x.age))].sort((a,b)=>a-b);
+    const rng = AGES.length ? AGES[0]+" à "+AGES[AGES.length-1]+" ans" : "";
+    const gs = DOCS.filter(x=>/^Semaine type/.test(x.t)).map(x=>x.t.replace("Semaine type ","").replace(" ans",""));
+    for(const k in PORTES) PORTES[k].s = PORTES[k].s.replace("__A__", rng).replace("__G__", gs.join(", ").replace(/, ([^,]*)$/," et $1")+" ans");
+  }catch(e){ $("#main").innerHTML = '<div class="empty">Les saisons n\'ont pas pu se charger. Vérifie la connexion pour la première ouverture, puis recharge la page.</div>'; return; }
+  route();
+  setTimeout(buildIndex, 50);
+}
+function buildIndex(){
+  if(NORM) return;
+  const tmp = document.createElement("div");
+  NORM = DOCS.map(x => { tmp.innerHTML = x.h; const t = (x.t+" \n "+tmp.textContent).replace(/\s+/g," "); return {raw:t, f:fold(t)}; });
+}
+
+/* ---------- routage ---------- */
+window.addEventListener("hashchange", route);
+$("#back").onclick = () => { if(history.length > 1) history.back(); else location.hash = ""; };
+function route(){
+  let h = decodeURIComponent(location.hash.slice(1)); const qi = h.indexOf("?j="), qg = h.indexOf("?g="); JID = null; GID = null;
+  if(qi>=0 && !h.startsWith("s/")){ JID = h.slice(qi+3) || null; h = h.slice(0, qi); }
+  else if(qg>=0 && !h.startsWith("s/")){ GID = h.slice(qg+3) || null; h = h.slice(0, qg); }
+  else { const c = cour(); if(c && c.t==="j") JID = c.id; else if(c && c.t==="g") GID = c.id; }
+  const prem = PREM; PREM = false;
+  /* première ouverture sans adresse : la saison du joueur (ou du groupe) en cours, à la semaine en cours */
+  if(GR && GR.isJoueur && GR.isJoueur()){ JID = GR.mode().jid; GID = null; }
+  if(prem && !h){ const c = cour(); let cd = c ? (c.t==="j" ? jCode(c.joueur) : gCode(c.id)) : null; if(!cd && JID) cd = jCode(jGet(JID));
+    if(cd && BY[cd]){ location.replace(`#/s/${cd}/w${curWeek()}`); return; } }
+  const m = $("#main"); window.scrollTo(0,0); VX.hero(null);
+  if(h.startsWith("/s/")) { const [c,w]=h.slice(3).split("/"); return showDoc(normCode(c), w); }   // GRÜN : saisons.html#/s/<code>[/w<n>]
+  if(h.startsWith("d/")) return showDoc(normCode(h.slice(2).split("/")[0]), h.split("/")[2]);
+  if(h.startsWith("p/")) return showPorte(h.slice(2));
+  if(h==="/accueil") return showHome();
+  if(h.startsWith("s/")) { $("#q").value = h.slice(2); return showSearch(h.slice(2)); }
+  showHome();
+}
+function porteOf(x){ return x.p; }
+function pc(p){ return `var(${PORTES[p].c})`; }
+
+/* ---------- accueil ---------- */
+function showHome(){
+  document.documentElement.style.setProperty("--acc", "var(--ink)");
+  const m = $("#main");
+  const count = p => DOCS.filter(x=>porteOf(x)===p).length;
+  const cw = curWeek(), cwk = CALW.find(x=>x.n===cw);
+  titre(""); ecran("saisons");
+  const c0 = cour(), cd0 = c0 ? (c0.t==="j" ? jCode(c0.joueur) : gCode(c0.id)) : null;
+  /* E1B : héros marches ; choix des saisons en cartes illustrées. Audit 26 oct. : un seul « Référentiel » (veille.html#/ref) ; cette page en est le bloc « Saisons de référence » */
+  const nS = DOCS.filter(x=>x.sx).length;
+  VX.hero({vis:"marches", lab:"Référentiel · saisons", titre:"Saisons de référence", sous:`<b>${nS}</b> saisons · ${AGES.length?AGES[0]+" à "+AGES[AGES.length-1]+" ans":""}`});
+  let html = "";
+  if(cd0 && BY[cd0]) html += `<a class="pj vpj" href="#/s/${cd0}/w${cw}"><small>${c0.t==="g"?"Groupe en cours":"Joueur en cours"}</small><b>${esc(c0.nom)} · ${esc(BY[cd0].t)}</b><small>Ouvrir à la semaine en cours (S${cw})${c0.t==="g"?" · âge médian du groupe":""}</small></a>`;
+  html += `<div class="vx-cards c3 vdoors">${[["1","frise"],["2","frise_g"],["3","calendrier"]].map(([p,v],i)=>VX.carte({href:"#p/"+p, vis:v, n:VX.n2(i+1), t:PORTES[p].n, s:p==="3"?"Étapes, calendrier, semaines types":`${count(p)} saisons`, k:p==="3"?"row":""})).join("")}</div>`;
+  html += `<div class="sec"><h2>Accès direct</h2><div class="quick">
+    <div class="f"><label for="qs">Sexe</label><select id="qs"><option value="F">Fille</option><option value="G">Garçon</option></select></div>
+    <div class="f"><label for="qa">Âge</label><select id="qa">${AGES.map(a=>`<option value="${a}">${a} ans</option>`).join("")}</select></div>
+    <div class="f" style="flex:1;min-width:200px"><label for="qw">Semaine</label><select id="qw"><option value="0">Toute la saison</option>${CALW.map(w=>`<option value="${w.n}">S${w.n} · ${dd(w.du)} - ${dd(w.au)}${w.n===cw?" (en cours)":""}</option>`).join("")}</select></div>
+    <button class="go" id="qgo" type="button">Ouvrir</button></div>
+    <div class="tools" style="margin-top:8px"><button class="ib" id="qnow" type="button">Cette semaine (S${cw}${cwk?" · "+dd(cwk.du):""})</button></div></div>`;
+  const js = JR().filter(j=>BY[jCode(j)]);
+  if(js.length) html += `<div class="sec"><h2>${js.length>1?"La saison de mes joueurs":"Ma saison"}</h2><p class="msg" style="margin:-4px 0 8px">Ouvre la saison de son âge et de son sexe, directement à la semaine en cours (S${cw}).</p><div class="pjs">${js.slice(0,24).map(j=>`<a class="pj" href="#/s/${jCode(j)}/w${cw}?j=${encodeURIComponent(j.id)}"><b>${esc(j.nom)}</b><small>Saison ${j.sexe==="F"?"fille":"garçon"} ${jAge(j)} ans · S${cw}</small></a>`).join("")}</div></div>`;
+  const favs = P.fav.filter(c=>BY[c]), recs = P.rec.filter(c=>BY[c]).slice(0,8);
+  html += `<div class="sec"><h2>Favoris</h2>${favs.length ? listHTML(favs.map(c=>BY[c]), true) : '<div class="empty">Touche ☆ en haut d\'un document pour le retrouver ici.</div>'}</div>`;
+  if(recs.length) html += `<div class="sec"><h2>Consultés récemment</h2>${listHTML(recs.map(c=>BY[c]), true)}</div>`;
+  html += `<details class="grun-plus"><summary>Plus d'options</summary><div class="grun-plusb"><div class="tools">
+     <button class="ib" id="bsave" type="button">${GR&&GR.TXT?GR.TXT.sauver:"Tout sauvegarder"}</button>
+     <label class="ib" for="frest">${GR&&GR.TXT?GR.TXT.restaurer:"Restaurer une sauvegarde"}</label><input id="frest" type="file" accept=".json,application/json" hidden>
+     <button class="ib" id="fsm" type="button" aria-label="Texte plus petit">A−</button><button class="ib" id="fsp" type="button" aria-label="Texte plus grand">A+</button></div><p class="msg" id="dmsg">Favoris et notes sont gardés sur cet appareil.</p></div></details>`;
+  html += cd0 && BY[cd0] ? actbar(`Ouvrir la saison de ${c0.t==="j"?prenom(c0.joueur):c0.nom} · S${cw}`, "hgo", `#/s/${cd0}/w${cw}`) : actbar(`Ouvrir · cette semaine (S${cw})`, "hgo");
+  m.innerHTML = html;
+  const qs=$("#qs"), qa=$("#qa"), qw=$("#qw"); qs.value=P.sx; qa.value=AGES.includes(+P.age)?P.age:String(AGES[AGES.length-1]||14); qw.value="0";
+  if(cd0 && BY[cd0]){ qs.value = BY[cd0].sx; qa.value = String(BY[cd0].age); }   /* présélection : joueur ou groupe en cours */
+  else { /* audit 26 oct. : sinon, l'âge et le sexe choisis dans la Bibliothèque (pastille d'âge partagée) */
+    try{ const ab = GR && GR.ageBib ? GR.ageBib() : null; if(ab){ if(/^[FG]$/.test(ab.sexe||"")) qs.value = ab.sexe; const a = Math.max(AGES[0], Math.min(AGES[AGES.length-1], ab.age||0)); if(AGES.includes(a)) qa.value = String(a); } }catch(e){} }
+  if(!(cd0 && BY[cd0])) $("#hgo").onclick = ()=>$("#qnow").click();
+  const cd=()=>normCode(qs.value+qa.value);
+  $("#qgo").onclick=()=>{ P.sx=qs.value; P.age=qa.value; save(); location.hash = `/s/${cd()}` + (+qw.value ? `/w${qw.value}` : ""); };
+  $("#qnow").onclick=()=>{ P.sx=qs.value; P.age=qa.value; save(); location.hash = `/s/${cd()}/w${curWeek()}`; };
+  $("#bsave").onclick=exportData; $("#frest").onchange=importData;
+  $("#fsm").onclick=()=>setFs(-1); $("#fsp").onclick=()=>setFs(1);
+}
+function setFs(d){ P.fs=Math.max(14,Math.min(24,P.fs+d)); save(); document.documentElement.style.setProperty("--fs",P.fs+"px"); const m=$("#dmsg"); if(m) m.textContent="Taille du texte des documents : "+P.fs+" px."; }
+function listHTML(xs, withPath){
+  return `<div class="list">${xs.map(x=>`<a class="li hasx" href="#d/${x.c}"><span class="code cx">${x.c}</span><span class="tt">${esc(x.t)}${withPath?`<small>${esc(x.ch)}</small>`:""}</span></a>`).join("")}</div>`;
+}
+
+/* ---------- porte ---------- */
+function showPorte(p){
+  if(!PORTES[p]) return showHome();
+  document.documentElement.style.setProperty("--acc", pc(p));
+  const xs = DOCS.filter(x=>porteOf(x)===p), groups = {}; ecran("saisons/porte"); titre(PORTES[p].n);
+  xs.forEach(x=>{ (groups[x.d] = groups[x.d] || []).push(x); });
+  VX.hero({vis:{"1":"frise","2":"frise_g","3":"calendrier"}[p], bas:true, lab:"Référentiel · saisons de référence", titre:PORTES[p].n, sous:esc(PORTES[p].s)});
+  const cw = curWeek();
+  /* saisons : une carte par âge (le chiffre mis en scène), rangées par étape de formation */
+  let html = Object.entries(groups).map(([d,arr])=>`<div class="fold" style="--pc:${pc(p)}"><h3>${esc(d)}</h3>${arr.every(x=>x.sx) ? `<div class="agecs">${arr.map(x=>`<a class="agec" href="#/s/${x.c}/w${cw}"><b>${x.age}</b><span>ans</span><small>${x.sx==="F"?"Fille":"Garçon"}</small></a>`).join("")}</div>` : listHTML(arr,false)}</div>`).join("");
+  $("#main").innerHTML = html;
+}
+
+/* ---------- document ---------- */
+function showDoc(code, hint){
+  const x = BY[code]; if(!x) return showHome();
+  const p = porteOf(x); document.documentElement.style.setProperty("--acc", pc(p));
+  P.rec = [code, ...P.rec.filter(c=>c!==code)].slice(0,20); save();
+  const sib = DOCS.filter(y=>y.d===x.d), k = sib.indexOf(x), prev = sib[k-1], next = sib[k+1];
+  const fav = P.fav.includes(code), jb = jGet(JID), gb = jb ? null : gGet(GID); titre(x.t); ecran(x.sx ? "saisons/saison" : "saisons/doc"); CURX = x.sx ? {x, jb, gb} : null;
+  const cible = jb ? prenom(jb) : gb ? gb.nom : null, wsel = hint && /^w\d+$/.test(hint) ? +hint.slice(1) : curWeek();
+  const m = $("#main"); m.style.setProperty("--pc", pc(p));
+  VX.hero({vis:x.sx?(x.sx==="F"?"frise":"frise_g"):"calendrier", bas:true, lab:`Référentiel · ${PORTES[p].n}${x.d&&x.d!==PORTES[p].n?" · "+String(x.d).replace(/^\d+(\.\d+)*\s/,""):""}`, titre:x.t});
+  m.innerHTML = `<div class="vacts"><button class="ib star" id="fav" type="button" aria-pressed="${fav}">${fav?"★ Favori":"☆ Favori"}</button><span class="crumb xp">${esc(x.ch||"")}</span></div>${jumps(x)}
+    ${x.sx?`${jb?`<div class="pjbar">Pour <b>${esc(jb.nom)}</b>${jCode(jb)!==x.c?` · sa saison : <a href="#/s/${jCode(jb)}/w${curWeek()}?j=${encodeURIComponent(jb.id)}">${jb.sexe==="F"?"fille":"garçon"} ${jAge(jb)} ans</a>`:""}</div>`
+      : gb?`<div class="pjbar">Pour le groupe <b>${esc(gb.nom)}</b>${gCode(gb.id)&&gCode(gb.id)!==x.c&&BY[gCode(gb.id)]?` · sa saison : <a href="#/s/${gCode(gb.id)}/w${curWeek()}?g=${encodeURIComponent(gb.id)}">${esc(BY[gCode(gb.id)].t.replace(/^Saison /,""))}</a>`:""}</div>`:""}
+      ${frise(x, wsel)}`:""}
+    <nav class="toc" id="toc" hidden></nav>
+    <article class="doc" id="doc"></article>
+    <div class="pn">${prev?`<a href="#d/${prev.c}"><small>‹ Précédent</small>${esc(prev.t)}</a>`:"<span></span>"}${next?`<a class="nx" href="#d/${next.c}"><small>Suivant ›</small>${esc(next.t)}</a>`:"<span></span>"}</div>
+    <div class="notes"><label for="nt" style="font-weight:600">Mes notes sur ce document</label><textarea id="nt" placeholder="Idées, joueurs concernés, à tester…"></textarea><div class="msg" id="ntm"></div></div>
+    <details class="grun-plus"><summary>Plus d'options</summary><div class="grun-plusb"><div class="tools">
+      ${x.sx?`<a class="ib" href="${progHref(x.c, 0)}">Utiliser comme base dans Create my prog, sans joueur</a><a class="ib" id="semcur" href="${progHref(x.c, curWeek(), jb&&jb.id)}${gb?"&gid="+encodeURIComponent(gb.id):""}">Créer les séances de cette semaine (S${curWeek()})</a>`:""}
+      <button class="ib" id="fsm" type="button" aria-label="Texte plus petit">A−</button><button class="ib" id="fsp" type="button" aria-label="Texte plus grand">A+</button>
+      <button class="ib" type="button" onclick="print()">Imprimer</button></div><p class="msg" id="dmsg"></p></div></details>
+    ${x.sx ? actbar(cible ? `Appliquer à ${cible}` : "Appliquer à mon joueur / mon groupe", "appl") : ""}`;
+  const ap = $("#appl"); if(ap) ap.onclick = ()=>appliquer(x.c, jb, gb);
+  // structure : L'essentiel encadré, Le détail en sections dépliables
+  const doc = $("#doc"); const tmp = document.createElement("div"); tmp.innerHTML = x.h;
+  tmp.querySelectorAll("table").forEach(t=>{ const w=document.createElement("div"); w.className="tw"; t.replaceWith(w); w.appendChild(t); });
+  /* légende de la frise : libellés manquants dans les anciennes données (le code couleur s'affichait à la place du nom) */
+  const LEGN = {"#DBEAFE":"Tournois d'hiver","#FEF3C7":"Tournois par équipes","#FFE4E6":"Tournois d'été","#E5E7EB":"Coupure","#0F766E":"B = bilan des grilles"};
+  tmp.querySelectorAll(".leg span").forEach(s=>{ const k = s.textContent.trim().toUpperCase(); if(LEGN[k]) s.lastChild.textContent = LEGN[k]; });
+  let cur = null, mode = null, sections = [];
+  for(const node of [...tmp.childNodes]){
+    if(node.nodeName==="H2"){
+      const t = fold(node.textContent);
+      if(t.includes("essentiel")){ cur = document.createElement("section"); cur.className="ess"; cur.appendChild(node); doc.appendChild(cur); mode="ess"; continue; }
+      mode = "det"; doc.appendChild(node); cur = doc; continue;
+    }
+    if(node.nodeName==="H3" && mode!=="ess"){
+      const d = document.createElement("details"); const s = document.createElement("summary"); s.innerHTML = node.innerHTML; d.appendChild(s);
+      const tt = GR&&GR.expert&&GR.expert() ? node.textContent : [...node.childNodes].filter(n=>!(n.classList&&n.classList.contains("xp"))).map(n=>n.textContent).join("");
+      d.id = "s"+sections.length; sections.push([d.id, tt]); doc.appendChild(d); cur = d; continue;
+    }
+    (cur || doc).appendChild(node);
+  }
+  { const essS = doc.querySelector("section.ess"), ul = essS && essS.querySelector(":scope > ul"); if(ul) ul.classList.add("vx-nl"); }   /* E1B : « L'essentiel » numéroté 01, 02… */
+  if(sections.length>2){ const toc=$("#toc"); toc.hidden=false; toc.innerHTML = `<b>Le détail</b><ol>${sections.map(([id,t])=>`<li><a href="#" data-s="${id}">${esc(t.replace(/^\d+\.\s*/,""))}</a></li>`).join("")}</ol>`;
+    toc.onclick = e=>{ const a=e.target.closest("a[data-s]"); if(!a) return; e.preventDefault(); const d=document.getElementById(a.dataset.s); d.open=true; d.scrollIntoView({behavior:"smooth",block:"start"}); }; }
+  if(sections.length===1){ doc.querySelector("details").open = true; }
+  /* l'ancienne frise SVG (charge, tournois, bilans) reste, repliée sous la frise touchable */
+  if(x.sx){ const fw = doc.querySelector(".frw"); if(fw){ const dt = document.createElement("details"); dt.className = "frd"; dt.innerHTML = "<summary>Frise détaillée : périodes, tournois, bilans</summary>"; fw.before(dt);
+    let n = fw; const L = [fw]; while((n = n.nextSibling) && n.nodeName==="P" && /leg|msg/.test(n.className)) L.push(n); L.forEach(e=>dt.appendChild(e)); } }
+  if(window.GRUN&&GRUN.clair) GRUN.clair(document.getElementById("doc"));   /* lignes de grille en clair (mode simple) */
+  doc.querySelectorAll('.wkgo a[href*="#/nouveau/"]').forEach(a=>{ const q=a.getAttribute("href").split("?")[1]||""; const w=(q.match(/w=(\d+)/)||[])[1]; a.href = progHref(x.c, w, jb&&jb.id); });
+  if(jb) $("#main").querySelectorAll('.jump a[href^="#/s/"]').forEach(a=>{ a.href += "?j="+encodeURIComponent(jb.id); });
+  // favoris, taille, notes
+  $("#fav").onclick = ()=>{ const on = !P.fav.includes(code); P.fav = on ? [code,...P.fav] : P.fav.filter(c=>c!==code); save(); $("#fav").setAttribute("aria-pressed",on); $("#fav").textContent = on?"★ Favori":"☆ Favori"; };
+  $("#fsm").onclick=()=>setFs(-1); $("#fsp").onclick=()=>setFs(1);
+  const nt=$("#nt"); nt.value = P.notes[code]||""; let tm;
+  nt.oninput = ()=>{ clearTimeout(tm); tm=setTimeout(()=>{ if(nt.value.trim()) P.notes[code]=nt.value; else delete P.notes[code]; save(); $("#ntm").textContent="Note enregistrée sur cet appareil."; },500); };
+  if(x.sx){ voirSemaine(x, wsel, jb, gb, false); const tls = $("#tls"), b = tls && tls.querySelector(`[data-wk="${wsel}"]`); if(b) tls.scrollLeft = Math.max(0, b.offsetLeft - tls.clientWidth/2 + 14);
+    $("#tlz").onclick = e=>{ const b = e.target.closest("[data-wk]"); if(!b) return; voirSemaine(x, +b.dataset.wk, jb, gb, true); }; }
+  // aller à un âge ou surligner une recherche
+  if(hint && hint.startsWith("w")){ if(!x.sx) goWeek(+hint.slice(1)); }
+  else if(hint && hint.startsWith("a")) goAge(+hint.slice(1));
+  else if(hint && hint.startsWith("q")) highlight(hint.slice(1));
+}
+/* ---------- frise touchable : phases (mésocycles) et 52 semaines ; toucher une semaine l'ouvre juste en dessous ---------- */
+/* design E : couleurs des phases (fixées dans les données) traduites pour le fond sombre, à l'affichage seulement */
+const ECOL = {"#0F766E":"#3BE08A","#1D4ED8":"#7CC8FF","#7C3AED":"#B9A2FF","#B91C1C":"#FF9F6B","#0369A1":"#C9D2CC","#94A3B8":"#8A968F","#64748B":"#8A968F"};
+const ecol = c => ECOL[String(c||"").toUpperCase()] || c;
+function frise(x, wsel){ const F = x.fr; if(!F) return ""; const cw = curWeek(), petit = F.pl == null;
+  const mois = []; let last = -1; CALW.forEach(w=>{ const d = new Date(w.du+"T12:00:00"); d.setDate(d.getDate()+3); if(d.getMonth()!==last){ mois.push([w.n, MOISC[d.getMonth()]]); last = d.getMonth(); } });
+  const haut = w => petit ? (w[3] ? 40 : 10) : Math.max(6, (w[1]||0)*10);
+  return `<section class="tl" aria-label="Frise de la saison"><div class="tlh"><b>La saison en un coup d'œil</b><span class="msg">Touche une semaine pour l'ouvrir · S${cw} = cette semaine</span></div>
+    <div class="tls" id="tls"><div class="tlg" id="tlz" style="grid-template-columns:repeat(52,30px)">
+    ${(F.M||[]).map(m=>`<div class="tlM" style="grid-column:${m[2]}/${m[3]+1}" title="${esc(m[1])}">${esc(m[1])}</div>`).join("")}
+    ${F.m.map(m=>`<button type="button" class="tlm" data-wk="${m[3]}" style="grid-column:${m[3]}/${m[4]+1};background:${ecol(m[5])}" title="${esc(m[1]+" · "+m[2])}">${esc(m[1])}</button>`).join("")}
+    ${F.w.map(w=>{ const [n,ch,mi,se,c,bi,to] = w, C = CALW.find(z=>z.n===n)||{};
+      return `<button type="button" class="tlw${se?"":" off"}${n===cw?" now":""}${n===wsel?" sel":""}" data-wk="${n}" style="grid-column:${n};--c:${ecol(c)}" aria-label="Semaine ${n}, ${C.du?dd(C.du):""}, ${esc(mi)}${petit?"":", dureté "+ch+" sur 5"}"><span>${n}</span>${bi?'<em class="bb">B</em>':""}${to?'<em class="tt"></em>':""}<i style="height:${haut(w)}px"></i></button>`; }).join("")}
+    ${mois.map(([n,t])=>`<div class="tlmo" style="grid-column:${n}/span 4">${t}</div>`).join("")}
+    </div></div>
+    <div class="tll">${(F.leg||[]).map(([t,c])=>`<span><i style="background:${ecol(c)}"></i>${esc(t)}</span>`).join("")}${F.w.some(w=>w[6])?'<span><i style="background:#FF5C5C;border-radius:50%"></i>Tournoi</span>':""}<span><i style="background:#3BE08A"></i>B = ${petit?"observation":"bilan"}</span>${petit?"":'<span>Hauteur = dureté prévue (0 à 5)</span>'}</div>
+    <div class="tlc" id="tlc"></div></section>`; }
+function voirSemaine(x, n, jb, gb, defil){
+  const F = x.fr, w = F.w.find(w=>w[0]===n), C = CALW.find(c=>c.n===n), m = F.m.find(m=>n>=m[3]&&n<=m[4]); if(!w||!C) return; SEL = n;
+  document.querySelectorAll("#tlz .tlw").forEach(b=>b.classList.toggle("sel", +b.dataset.wk===n));
+  const h = document.getElementById("w"+n), part = [];
+  if(h){ let e = h.nextElementSibling; while(e && !/^H[34]$/.test(e.nodeName)){ if(!e.classList.contains("wkgo")) part.push(e.cloneNode(true)); e = e.nextElementSibling; } }
+  const box = $("#tlc"); box.style.setProperty("--c", w[4] ? ecol(w[4]) : m ? ecol(m[5]) : "var(--pc)");
+  const q = (jb ? "" : "") + (gb ? "&gid="+encodeURIComponent(gb.id) : "");
+  box.innerHTML = `<h3>Semaine ${n} · ${dd(C.du)} - ${dd(C.au)}</h3><p class="ph">${m?`${esc(m[1])} · ${esc(m[2])}`:""}${w[2]&&(!m||w[2]!==m[2])?`${m?" · ":""}${esc(w[2])}`:""}${w[1]==null?"":` · dureté ${w[1]} sur 5`}${n===curWeek()?" · <b>cette semaine</b>":""}</p><div class="doc tlx"></div>
+    <div class="tools">${w[3]?`<a class="ib" href="${progHref(x.c, n, jb&&jb.id)}${q}">Créer les séances de cette semaine</a>`:""}<button class="ib" type="button" id="tlvoir">Voir dans la saison</button></div>`;
+  part.forEach(e=>box.querySelector(".tlx").appendChild(e));
+  box.querySelectorAll("table").forEach(t=>{ if(t.parentNode.className!=="tw"){ const d=document.createElement("div"); d.className="tw"; t.replaceWith(d); d.appendChild(t); } });
+  $("#tlvoir").onclick = ()=>goWeek(n);
+  try{ history.replaceState(null, "", "#/s/"+x.c+"/w"+n+(JID&&location.hash.includes("?j=")?"?j="+encodeURIComponent(JID):GID&&location.hash.includes("?g=")?"?g="+encodeURIComponent(GID):"")); }catch(e){}
+  if(defil) box.scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+/* « Appliquer à mon joueur / mon groupe » : Create my prog prérempli sur cette saison (adresse #/nouveau/<jid>?base=<code>[&gid=<gid>]) */
+function appliquer(code, jb, gb){
+  const go = (jid, gid) => { if(!jid && !gid) return; location.href = progHref(code, 0, jid) + (gid ? "&gid="+encodeURIComponent(gid) : ""); };
+  if(jb) return go(jb.id, null); if(gb) return go(null, gb.id);
+  if(GR&&GR.ui&&GR.ui.choisirJoueur) return GR.ui.choisirJoueur("Appliquer cette saison à qui ?", go, {toujours:true});
+  location.href = progHref(code, 0);
+}
+function jumps(x){
+  if(!x.sx) return ""; const a=x.age, o=x.sx==="F"?"G":"F";
+  const c=(s,n)=>normCode(s+n);
+  return `<div class="jump">${BY[c(x.sx,a-1)]?`<a href="#/s/${c(x.sx,a-1)}">‹ ${a-1} ans</a>`:""}${BY[c(x.sx,a+1)]?`<a href="#/s/${c(x.sx,a+1)}">${a+1} ans ›</a>`:""}${BY[c(o,a)]?`<a href="#/s/${c(o,a)}">Même âge · ${o==="F"?"filles":"garçons"}</a>`:""}<button type="button" class="now" data-now="1">Cette semaine (S${curWeek()})</button></div>`;
+}
+document.addEventListener("click", e=>{
+  const n=e.target.closest("[data-now]"); if(n){ e.preventDefault(); if(CURX && $("#tlc")){ voirSemaine(CURX.x, curWeek(), CURX.jb, CURX.gb, true); return; } goWeek(curWeek()); return; }
+  const w=e.target.closest("svg.frise a[data-w]"); if(w){ e.preventDefault(); goWeek(+w.dataset.w); }
+});
+function goWeek(n){
+  const h=document.getElementById("w"+n); if(!h) return; const d=h.closest("details"); if(d) d.open=true;
+  setTimeout(()=>{ h.scrollIntoView({behavior:"smooth",block:"start"}); h.classList.add("flash"); },60);
+}
+function ageIn(text, age){
+  const t = fold(text); if(!/\ban|ans\b/.test(t)) return false;
+  const nums = (t.match(/\d+/g)||[]).map(Number).filter(n=>n<=25); if(!nums.length) return false;
+  if(/\d+\s*(-|a|à|et)\s*\d+/.test(t) && nums.length>=2){ const lo=Math.min(...nums), hi=Math.max(...nums); return age>=lo && age<=hi; }
+  return nums.includes(age);
+}
+function goAge(age){
+  const doc = $("#doc");
+  let target = [...doc.querySelectorAll("details")].find(d=>ageIn(d.querySelector("summary").textContent, age));
+  if(target){ target.open=true; setTimeout(()=>{ target.scrollIntoView({behavior:"smooth",block:"start"}); target.querySelector("summary").classList.add("flash"); },60); return; }
+  const h = [...doc.querySelectorAll("h4,h5")].find(e=>ageIn(e.textContent, age));
+  if(h){ const d=h.closest("details"); if(d) d.open=true; setTimeout(()=>{ h.scrollIntoView({behavior:"smooth",block:"center"}); h.classList.add("flash"); },60); return; }
+  const td = [...doc.querySelectorAll("td:first-child")].find(e=>ageIn(e.textContent, age));
+  if(td){ const tr=td.parentNode; setTimeout(()=>{ tr.scrollIntoView({behavior:"smooth",block:"center"}); tr.classList.add("flash"); },60); }
+}
+
+/* ---------- recherche ---------- */
+let sT;
+$("#q").addEventListener("input", e=>{ clearTimeout(sT); const v=e.target.value.trim(); sT=setTimeout(()=>{ if(v.length>=2) history.replaceState(null,"","#s/"+encodeURIComponent(v)), showSearch(v); else if(!v && location.hash.startsWith("#s/")) location.hash=""; },250); });
+$("#q").addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.target.blur(); } });
+function terms(q){ return fold(q).split(/\s+/).filter(w=>w.length>=2); }
+function showSearch(q){
+  document.documentElement.style.setProperty("--acc", "var(--ink)"); ecran("saisons/recherche"); titre("Recherche");
+  buildIndex();
+  const ts = terms(q), m = $("#main");
+  if(!ts.length){ showHome(); return; }
+  const res = [];
+  NORM.forEach((n,i)=>{
+    let score=0, first=-1;
+    for(const t of ts){ let c=0, pos=n.f.indexOf(t); if(pos<0){ score=0; return; } if(first<0||pos<first) first=pos; while(pos>=0 && c<60){ c++; pos=n.f.indexOf(t,pos+t.length); } score+=c; }
+    if(fold(DOCS[i].t).includes(ts[0])) score+=40;
+    res.push({i, score, first});
+  });
+  res.sort((a,b)=>b.score-a.score);
+  const top = res.slice(0,60);
+  let html = `<h1>Recherche</h1><p class="lead">${res.length ? `${res.length} document${res.length>1?"s":""} pour « ${esc(q)} »${res.length>60?" · les 60 plus pertinents":""}` : `Aucun document ne contient « ${esc(q)} ». Essaie un mot plus court ou un synonyme.`}</p><div class="sec">`;
+  html += top.map(r=>{ const x=DOCS[r.i], n=NORM[r.i]; const a=Math.max(0,r.first-90), b=Math.min(n.raw.length,r.first+190);
+    let snip = (a?"…":"")+n.raw.slice(a,b)+(b<n.raw.length?"…":"");
+    snip = markTerms(esc(snip), ts);
+    return `<a class="res" href="#d/${x.c}/q${encodeURIComponent(q)}" style="--pc:${pc(porteOf(x))}"><div class="t">${esc(x.t)}</div><div class="w">${esc(x.ch)}</div><div class="s">${snip}</div></a>`; }).join("");
+  m.innerHTML = html + "</div>";
+}
+function markTerms(htmlText, ts){
+  const f = fold(htmlText); let out="", i=0;
+  const hits=[]; ts.forEach(t=>{ let p=f.indexOf(t); while(p>=0){ hits.push([p,p+t.length]); p=f.indexOf(t,p+t.length); } });
+  hits.sort((a,b)=>a[0]-b[0]); let last=0;
+  for(const [s,e] of hits){ if(s<last) continue; const pre=htmlText.slice(last,s); if(/&[a-z]*$/.test(pre)) continue; out+=pre+"<mark>"+htmlText.slice(s,e)+"</mark>"; last=e; }
+  return out+htmlText.slice(last);
+}
+function highlight(q){
+  const ts = terms(q); if(!ts.length) return; const doc=$("#doc");
+  const walker = document.createTreeWalker(doc, NodeFilter.SHOW_TEXT); const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+  let firstMark=null;
+  for(const n of nodes){ const f=fold(n.nodeValue); const hits=[]; ts.forEach(t=>{ let p=f.indexOf(t); while(p>=0){ hits.push([p,p+t.length]); p=f.indexOf(t,p+t.length); } });
+    if(!hits.length) continue; hits.sort((a,b)=>a[0]-b[0]);
+    const frag=document.createDocumentFragment(); let last=0;
+    for(const [s,e] of hits){ if(s<last) continue; frag.append(n.nodeValue.slice(last,s)); const mk=document.createElement("mark"); mk.textContent=n.nodeValue.slice(s,e); frag.append(mk); if(!firstMark) firstMark=mk; last=e; }
+    frag.append(n.nodeValue.slice(last)); n.replaceWith(frag); }
+  doc.querySelectorAll("mark").forEach(mk=>{ const d=mk.closest("details"); if(d) d.open=true; });
+  if(firstMark) setTimeout(()=>firstMark.scrollIntoView({behavior:"smooth",block:"center"}),80);
+}
+
+/* ---------- sauvegarde ---------- */
+async function exportData(){
+  if(GR){ GR.telecharger(GR.exportAll(), "GRUN_sauvegarde_"+new Date().toISOString().slice(0,10)+".json"); const m=$("#dmsg"); if(m) m.textContent="Sauvegarde de toute l'appli créée : garde-la dans Fichiers."; return; }
+  const blob = new Blob([JSON.stringify({format:"saisons", version:1, date:new Date().toISOString().slice(0,10), fav:P.fav, notes:P.notes}, null, 1)], {type:"application/json"});
+  const name = "Saisons_favoris_notes_"+new Date().toISOString().slice(0,10)+".json";
+  let dl=null; try{ dl = await window.claude?.use?.("downloads"); }catch(e){}
+  if(dl){ try{ await dl.save({filename:name, data:blob}); return; }catch(e){ if(e&&e.code==="declined") return; } }
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove();
+}
+async function importData(e){
+  const f=e.target.files&&e.target.files[0]; e.target.value=""; if(!f) return; const m=$("#dmsg");
+  try{ const d=JSON.parse(await f.text());
+    if(GR && d.app==="GRUN"){ GR.importAll(d); P = Object.assign({fav:[], rec:[], notes:{}, fs:17, sx:"G", age:"14"}, load()); showHome(); $("#dmsg").textContent="Sauvegarde restaurée."; return; }
+    if(d.format!=="saisons") throw 0;
+    P.fav=[...new Set([...(d.fav||[]),...P.fav])]; P.notes=Object.assign({},P.notes,d.notes||{}); save(); showHome(); $("#dmsg").textContent="Favoris et notes restaurés."; }
+  catch(err){ m.textContent="Ce fichier n'est pas une sauvegarde de cette appli (Saisons_favoris_notes_….json)."; }
+}
+
+if(GR){ try{ GR.nav("res"); if(GR.isJoueur()) document.body.classList.add("joueur"); }catch(e){}
+  [["saisons","Les saisons de référence (Référentiel) : une saison de référence par âge (4 à 18 ans) et par sexe, construite sur la méthode : année type légère jusqu'à 8 ans, semaine type répétée ensuite, périodes à partir de 12 ans (fille) ou 13 ans (garçon). Il s'ouvre sur la saison de ton joueur en cours ; « Accès direct » ouvre n'importe quelle saison."],
+   ["saisons/saison","Une saison : la frise montre les périodes et les 52 semaines (couleur = type de semaine) ; touche une semaine pour voir son thème et celui de chaque séance : tennis, préparation physique, préparation mentale. Le bouton du bas l'applique à ton joueur ou ton groupe dans Create my prog."],
+   ["saisons/doc","Un document de la méthode : étapes, calendrier, semaines types dessinées, périodes et dureté, garde-fous. « L'essentiel » d'abord, le détail en sections dépliables."],
+   ["saisons/porte","Toutes les saisons d'une porte (filles, garçons) ou les documents de la méthode. Touche un titre pour l'ouvrir."],
+   ["saisons/recherche","La recherche lit toutes les saisons : un thème, une ligne, un mot. Le document s'ouvre sur le passage surligné."]].forEach(([k,t])=>{ try{ GR.aide(k,t); }catch(e){} }); }
+function ecran(k){ try{ GR&&GR.aide&&GR.aide.ecran&&GR.aide.ecran(k); }catch(e){} }
+let CURX = null;
+boot();
+</script>
+</body></html>

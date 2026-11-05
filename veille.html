@@ -1,0 +1,1260 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="GRÜN"><meta name="theme-color" content="#07090A"><meta name="color-scheme" content="dark">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png?v=3"><link rel="icon" href="icon-192.png?v=3">
+<style>/* GRÜN 2.0 — styles communs injectés dans chaque module (barre du bas, feuilles, toasts, composants partagés).
+   Design E « Night court » : UN SEUL THÈME, SOMBRE. Les composants communs utilisent les jetons --gx-* ci-dessous
+   (identiques quel que soit le module) ; les modules gardent leurs jetons (--bg, --panel, --ink, --mute, --line, --soft) mis à la palette E. */
+:root{
+  --gx-bg:#07090A; --gx-s1:#111614; --gx-s2:#1A211D; --gx-btn:#121714; --gx-line:#263029; --gx-sep:#1A211D;
+  --gx-ink:#F2F5F0; --gx-mute:#9AA59E; --gx-y:#E4FF3A; --gx-on:#07090A; --gx-g:#3BE08A; --gx-warn:#FF9F43; --gx-bad:#FF5C5C;
+  --gx-ui:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif; --gx-cond:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --grun:#E4FF3A; --grun-ink:#07090A; --grun-hi:#E4FF3A; --grun-on:#07090A; --nav-h:62px;
+  color-scheme:dark;
+}
+html{background:var(--gx-bg)}
+body.grun-has-nav{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px))}
+
+/* ---------- WORDMARK « GRÜN » aux deux balles (G.marque()) : la taille suit font-size ---------- */
+.grun-wm{display:inline-flex;align-items:flex-end;font-family:var(--gx-cond);font-weight:800;line-height:.82;letter-spacing:.03em;color:var(--gx-ink);white-space:nowrap}
+.grun-wm .u{position:relative;display:inline-block;color:var(--gx-g)}
+.grun-wm .u i{position:absolute;top:-.233em;width:.167em;height:.167em;border-radius:50%;background:var(--gx-y)}
+.grun-wm .u i:first-child{left:.067em}
+.grun-wm .u i+i{right:.067em}
+
+/* ---------- BARRE DU BAS CONTEXTUELLE (GRÜN 2.1, maquettes F2-F6) : « GRÜN · Accueil » + les onglets du mode (actif en jaune) ---------- */
+#grun-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);align-items:stretch;
+  background:#0C0F0D;border-top:1px solid var(--gx-sep);padding:0 max(6px,calc((100vw - 700px) / 2)) env(safe-area-inset-bottom,0px)}
+#grun-nav.seul{grid-auto-columns:minmax(0,120px);justify-content:center}
+#grun-nav a{min-width:0;min-height:var(--nav-h);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  text-decoration:none;color:var(--gx-mute);font:400 11px/1.1 var(--gx-ui);letter-spacing:0;-webkit-tap-highlight-color:transparent}
+#grun-nav a span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#grun-nav a span{letter-spacing:-.01em}#grun-nav a{padding-left:1px;padding-right:1px}
+#grun-nav svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#grun-nav a.on{color:var(--gx-y);font-weight:600}
+/* iPad / iPhone (Safari) : quand la barre d'outils de Safari se replie, la barre fixe peut se décoller du bord ; son fond se prolonge vers le bas pour que rien ne défile visiblement dessous */
+#grun-nav{box-shadow:0 160px 0 0 #0C0F0D}
+html,body{overscroll-behavior-y:none}
+/* audit 26 oct. : « Banque scientifique » (un seul nom par module) peut passer sur 2 lignes ; les icônes restent alignées */
+#grun-nav[data-mode=biblio] a:not(.nv-g){justify-content:flex-start;padding-top:8px;gap:3px}#grun-nav[data-mode=biblio] a:not(.nv-g) span{white-space:normal;text-align:center;line-height:1.02;max-height:2.1em}
+#grun-nav a:active{opacity:.7}
+/* « GRÜN » (deux balles du Ü) + « Accueil » : retour à la page de garde, toujours à gauche */
+#grun-nav a.nv-g{font:800 13px/1 var(--gx-cond);letter-spacing:.06em;gap:5px}
+#grun-nav a.nv-g .grun-wm{font-size:18px;padding-top:3px;overflow:visible}
+#grun-nav a.nv-g>span:last-child,#grun-nav a.nv-g .grun-wm,#grun-nav a.nv-g .grun-wm span{overflow:visible;max-width:none}
+@media print{#grun-nav{display:none}body.grun-has-nav{padding-bottom:0}}
+/* « + » (Performance et mode joueur seulement) */
+#grun-nav #grun-plus{min-width:0;border:0;background:none;padding:0;display:flex;align-items:center;justify-content:center;min-height:var(--nav-h);cursor:pointer;-webkit-tap-highlight-color:transparent}
+#grun-nav #grun-plus span{width:46px;height:46px;border-radius:50%;background:var(--gx-y);color:var(--gx-on);display:flex;align-items:center;justify-content:center;transition:transform .1s ease}
+#grun-nav #grun-plus svg{width:24px;height:24px;stroke-width:2.4;stroke:currentColor}
+#grun-nav #grun-plus:active span{transform:scale(.92)}
+@media (max-width:370px){#grun-nav a{font-size:10.5px}#grun-nav #grun-plus span{width:42px;height:42px}}
+/* feuille « Âge et sexe » de la Bibliothèque */
+.gs-ages{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.gs-ages .gs-chip{padding:0 4px;text-align:center;font-family:var(--gx-cond);font-weight:700;font-size:16px;letter-spacing:.02em}
+@media (max-width:360px){.gs-ages{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* fil « poupée russe » : bandeau de retour vers le module appelant */
+.grun-relais{position:sticky;top:0;z-index:40;display:flex;gap:10px;align-items:center;justify-content:space-between;
+  background:var(--gx-s2);color:var(--gx-ink);border-bottom:1px solid var(--gx-line);padding:8px 16px;font:600 14px/1.3 var(--gx-ui)}
+.grun-relais a,.grun-relais button{color:var(--gx-ink);background:var(--gx-s1);border:1px solid var(--gx-line);border-radius:22px;
+  min-height:44px;padding:0 14px;display:inline-flex;align-items:center;text-decoration:none;font:inherit;white-space:nowrap;cursor:pointer}
+.grun-relais button:last-child,.grun-relais .main{background:var(--gx-y);border-color:var(--gx-y);color:var(--gx-on)}
+.grun-mod #back{visibility:visible!important}
+/* mode simple / mode expert (GRUN.expert) : « xp » = réservé au mode expert ; « xs » = seulement en mode simple */
+html.grun-simple .xp{display:none!important}
+html.grun-expert .xs{display:none!important}
+/* « Plus d'options » : réglages fins et actions rares, repliés (même aspect dans tous les modules) */
+details.grun-plus{margin-top:14px;border:1px solid var(--gx-line);border-radius:18px;background:var(--gx-s1)}
+details.grun-plus>summary{list-style:none;cursor:pointer;min-height:52px;display:flex;align-items:center;gap:10px;padding:0 16px;font:600 15px/1.2 var(--gx-cond);letter-spacing:.14em;text-transform:uppercase;color:var(--gx-mute)}
+details.grun-plus>summary::-webkit-details-marker{display:none}
+details.grun-plus>summary::before{content:"+";font-weight:700;width:1em;color:var(--gx-y);font-size:18px;letter-spacing:0}
+details.grun-plus[open]>summary::before{content:"–"}
+details.grun-plus>.grun-plusb{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px}
+/* Grilles : bilan en cours + un gros bouton « Créer un nouveau bilan » */
+.bil1{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:14px;padding:12px 16px;border:1px solid var(--gx-line);border-radius:18px;background:var(--gx-s1)}
+.bil1 b{display:block;font-size:1.1rem}
+.bil1 small{color:var(--gx-mute)}
+.go.big{min-height:52px;padding:0 20px;font-size:1.02rem}
+/* listes : colonne « code » masquée en mode simple (classe hasx sur la ligne, cx sur le code) */
+html.grun-simple .hasx{grid-template-columns:minmax(0,1fr)!important}
+html.grun-simple .cx{display:none!important}
+/* Grilles : « L'essentiel » en cartes sur téléphone ; toucher une ligne ouvre son détail */
+#doc table.cartes td.lgo{cursor:pointer;color:var(--acc,var(--gx-y));font-weight:700}
+@media (max-width:640px){
+  #doc table.cartes,#doc table.cartes tbody,#doc table.cartes tr,#doc table.cartes td{display:block;width:auto!important}
+  #doc table.cartes thead{display:none}
+  #doc table.cartes tr{padding:10px 12px;border-bottom:1px solid var(--line,var(--gx-line))}
+  #doc table.cartes td{border:none!important;padding:2px 0!important}
+  #doc table.cartes td.lgo{font-size:1.05em}
+  #doc table.cartes td.lgo::after{content:" ›"}
+  #doc table.cartes td:nth-child(3)::before{content:"Test ★ : ";font-weight:600;color:var(--mute,var(--gx-mute))}
+}
+/* lignes de grille affichées en clair : les noms longs passent à la ligne */
+.lc{white-space:normal!important;overflow-wrap:anywhere;display:inline-block;max-width:100%}
+.boxh>div{min-width:0;flex:1 1 auto}
+/* bouton PDF commun (même aspect et même libellé « … PDF » dans tous les modules) : <button class="grun-pdf"><svg/><span>Rapport PDF</span></button> */
+.grun-pdf{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:22px;border:1px solid var(--gx-line);background:var(--gx-s1);color:var(--gx-ink);font:600 15px/1 var(--gx-ui);cursor:pointer;white-space:nowrap;text-decoration:none}
+.grun-pdf svg{width:19px;height:19px;fill:none;stroke:var(--gx-y);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.grun-pdf:disabled{opacity:.6}
+
+/* ===================== SOCLE « chemin ultra intuitif » =====================
+   RÈGLES DE MISE EN PAGE (toutes les pages) :
+   - retour « ‹ » en haut à gauche (#back) ; joueur en cours + « ? » en haut à droite (.grun-topx, injectés par GRUN.nav) ;
+   - action principale EN BAS, grande, dans la zone du pouce : <div class="grun-actbar"><button class="gs-btn main">…</button></div> ;
+   - options secondaires repliées : <details class="grun-plus"><summary>Plus d'options</summary><div class="grun-plusb">…</div></details> ;
+   - « + » unique au centre de la barre du bas (#grun-plus) ; créations dans une feuille (.grun-ov > .grun-sheet). */
+/* barre du haut : joueur en cours + aide */
+.grun-topx{display:inline-flex;gap:6px;align-items:center;flex:0 0 auto}
+.grun-chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;max-width:130px;padding:0 12px 0 4px;border:1px solid var(--gx-line);border-radius:22px;background:var(--gx-btn);color:var(--gx-ink);font:600 14px/1 var(--gx-ui);cursor:pointer}
+.grun-chip .gc-nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.gc-av{flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:var(--gx-y);color:var(--gx-on);display:inline-flex;align-items:center;justify-content:center;font:800 15px/1 var(--gx-cond)}
+.gc-av.g{border-radius:10px;background:var(--gx-g);color:var(--gx-on)}
+.gc-av.vide{background:var(--gx-s2);color:var(--gx-y)}
+.grun-q{width:44px;height:44px;border-radius:50%;border:1px solid var(--gx-line);background:var(--gx-btn);color:var(--gx-ink);font:700 18px/1 var(--gx-cond);cursor:pointer;padding:0}
+@media (max-width:430px){.grun-chip{max-width:96px;padding-right:10px}.grun-chip .gc-nm{font-size:13px}}
+@media (max-width:360px){.grun-chip .gc-nm{display:none}.grun-chip{padding:0 4px}}
+/* feuille (bottom sheet sur téléphone, fenêtre au centre sur iPad) */
+.grun-ov{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.62);display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .16s ease}
+.grun-ov.in{opacity:1}.grun-ov.out{opacity:0}
+.grun-sheet{width:100%;max-width:560px;max-height:min(90vh,calc(100vh - env(safe-area-inset-top,0px) - 24px));display:flex;flex-direction:column;background:var(--gx-s1);color:var(--gx-ink);border:1px solid var(--gx-line);border-bottom:0;border-radius:22px 22px 0 0;transform:translateY(24px);transition:transform .18s ease;font-family:var(--gx-ui);font-size:16px;line-height:1.4}
+.grun-sheet.large{max-width:720px}
+.grun-ov.in .grun-sheet{transform:none}
+@media (min-width:700px){.grun-ov{align-items:center}.grun-sheet{border-radius:22px;border-bottom:1px solid var(--gx-line);max-height:86vh}}
+.gs-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 16px 10px 20px;border-bottom:1px solid var(--gx-line)}
+.gs-h b{font-family:var(--gx-cond);font-size:1.5em;font-weight:800;line-height:1.05;text-transform:uppercase;letter-spacing:.02em}
+.gs-x{width:44px;height:44px;border-radius:50%;border:1px solid var(--gx-line);background:var(--gx-btn);color:var(--gx-ink);font-size:24px;line-height:1;cursor:pointer;flex:0 0 auto}
+.gs-b{padding:14px 20px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:12px;flex:1 1 auto;min-height:0}
+.gs-f{display:flex;gap:8px;padding:12px 20px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--gx-line)}
+.gs-btn{min-height:52px;border-radius:26px;border:1px solid var(--gx-line);background:var(--gx-s2);color:var(--gx-ink);font:700 16px/1.1 var(--gx-ui);padding:0 18px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;gap:6px}
+.gs-btn.main{flex:1;background:var(--gx-y);border-color:var(--gx-y);color:var(--gx-on)}
+.gs-btn.sec{flex:0 1 auto;margin:0}
+.gs-f{flex:0 0 auto}
+.gs-btn.sm{min-height:44px;font-size:14.5px;border-radius:22px;padding:0 14px;flex:0 0 auto}
+.gs-btn:disabled{opacity:.5}
+.gs-btn:active{transform:scale(.97)}
+.grun-ov.danger .gs-btn.main{background:var(--gx-bad);border-color:var(--gx-bad);color:var(--gx-on)}
+.gs-form{display:flex;flex-direction:column;gap:12px;margin:0}
+.gs-l{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:14.5px;color:var(--gx-ink);min-width:0}
+.gs-l small{font-weight:500;color:var(--gx-mute)}
+.gs-inp{min-height:48px;border:1px solid var(--gx-line);border-radius:12px;background:var(--gx-s2);color:var(--gx-ink);padding:0 12px;font:500 17px/1.2 var(--gx-ui);width:100%;max-width:100%;box-sizing:border-box;color-scheme:dark}
+.gs-ta{padding:10px 12px;min-height:84px;resize:vertical;line-height:1.4}
+.gs-inp:focus{outline:2px solid var(--gx-y);outline-offset:1px}
+.gs-seg{display:flex;border:1px solid var(--gx-line);border-radius:24px;overflow:hidden;background:var(--gx-s2)}
+.gs-seg button{flex:1;min-height:46px;border:0;background:none;color:var(--gx-mute);font:600 16px/1 var(--gx-ui);cursor:pointer}
+.gs-seg button+button{border-left:1px solid var(--gx-line)}
+.gs-seg button[aria-checked=true]{background:var(--gx-y);color:var(--gx-on)}
+.gs-chips{display:flex;flex-wrap:wrap;gap:6px}
+.gs-chip{min-height:44px;border:1px solid var(--gx-line);background:var(--gx-s2);color:var(--gx-ink);border-radius:22px;padding:0 16px;font:600 15px/1 var(--gx-ui);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gs-chips.big .gs-chip{min-height:48px;font-size:16px}
+.gs-chip.g{border-style:dashed}
+.gs-chip[aria-pressed=true]{background:var(--gx-y);border-color:var(--gx-y);color:var(--gx-on)}
+.gs-err{color:var(--gx-bad);font-weight:600;margin:0;min-height:0}
+.gs-err:empty{display:none}
+.gs-m{color:var(--gx-mute);font-size:14.5px;margin:0}
+.gs-m a{color:var(--gx-y)}
+.gs-p{margin:0;font-size:16.5px;line-height:1.5}
+.gs-sert{color:var(--gx-g);font-weight:600;font-size:13px}
+.gs-lien{align-self:flex-start;border:0;background:none;color:var(--gx-y);font:700 15.5px/1.2 var(--gx-ui);padding:10px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.gs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.gs-n .gs-inp{font-variant-numeric:tabular-nums}
+.gs-c{display:flex;gap:10px;align-items:flex-start;font-weight:600;font-size:15px}
+.gs-c input{width:22px;height:22px;flex:0 0 auto;margin-top:1px;accent-color:var(--gx-y)}
+.gs-c small{font-weight:500;color:var(--gx-mute)}
+.gs-cp fieldset{border:1px solid var(--gx-line);border-radius:16px;padding:10px 14px 14px;margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+.gs-cp legend{font:700 13px/1 var(--gx-cond);letter-spacing:.14em;text-transform:uppercase;color:var(--gx-mute);padding:0 4px}
+.gs-cp legend small{text-transform:none;letter-spacing:0;font-weight:500;font-family:var(--gx-ui)}
+details.gs-plus>summary{cursor:pointer;color:var(--gx-y);font-weight:700;padding:8px 0;list-style:none}
+details.gs-plus>summary::-webkit-details-marker{display:none}
+details.gs-plus[open]>summary{margin-bottom:8px}
+.gs-list{border:1px solid var(--gx-line);border-radius:14px;overflow:hidden}
+.gs-row{display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline;padding:9px 12px;border-top:1px solid var(--gx-line)}
+.gs-row:first-child{border-top:0}
+.gs-row span{color:var(--gx-mute);font-size:14px}
+.gs-row small{flex-basis:100%;color:var(--gx-bad);font-weight:600}
+.gs-row.ko b{color:var(--gx-bad)}
+.gs-menu{display:flex;flex-direction:column;gap:8px}
+.gs-menu.plus{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+@media (min-width:560px){.gs-menu.plus{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.gs-it{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 14px;align-items:center;text-align:left;min-height:64px;padding:10px 14px;border:1px solid var(--gx-line);border-radius:16px;background:var(--gx-s2);color:var(--gx-ink);text-decoration:none;cursor:pointer;font:inherit}
+.gs-it b{font-size:16.5px;grid-column:2}
+.gs-it span{grid-column:2;color:var(--gx-mute);font-size:13.5px;line-height:1.3}
+.gs-it:not(:has(.pi)){grid-template-columns:minmax(0,1fr)}.gs-it:not(:has(.pi)) b,.gs-it:not(:has(.pi)) span{grid-column:1}
+.gs-it.x{border-color:var(--gx-y)}
+.gs-it.st{cursor:default}
+.gs-it.st .gs-seg{grid-column:1/-1;margin-top:6px}
+.gs-it:active{background:#202823}
+.pi{grid-row:1/3;width:42px;height:42px;border-radius:13px;background:var(--gx-s1);border:1px solid var(--gx-line);position:relative}
+.pi::after{content:"";position:absolute;inset:10px;background:var(--gx-y);-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+.pi-joueur{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c0-4 4-6 8-6s8 2 8 6'/%3E%3C/svg%3E")}
+.pi-groupe{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Ccircle cx='8' cy='9' r='3'/%3E%3Ccircle cx='16' cy='9' r='3'/%3E%3Cpath d='M2 20c0-3 3-5 6-5s6 2 6 5M12 20c0-3 2-5 4-5s6 2 6 5'/%3E%3C/svg%3E")}
+.pi-session{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6' stroke-linejoin='round'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E")}
+.pi-test{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M12 3l8 5v8l-8 5-8-5V8z'/%3E%3C/svg%3E")}
+.pi-exo{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z'/%3E%3Cpath d='M4 19V5'/%3E%3C/svg%3E")}
+.pi-note{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M4 20h4L19 9l-4-4L4 16z'/%3E%3C/svg%3E")}
+.pi-wu{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.6'%3E%3Cpath d='M12 3c2 3 5 5 5 9a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-8z'/%3E%3C/svg%3E")}
+.gs-cur{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:12px 14px;border-radius:16px;background:var(--gx-s2);border:1px solid var(--gx-line)}
+.gs-cur b{font:800 19px/1.1 var(--gx-cond);text-transform:uppercase;letter-spacing:.02em}.gs-cur span{color:var(--gx-mute);font-size:14px;flex:1}
+.gs-bar{display:flex;flex-direction:column;gap:6px}
+.gs-bar>div,.gc-bar{display:block;height:8px;border-radius:99px;background:var(--gx-s2);overflow:hidden}
+.gs-bar i,.gc-bar i{display:block;height:100%;background:var(--gx-g);border-radius:99px;transition:width .3s}
+/* toast avec « Annuler » */
+#grun-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h,62px) + 14px + env(safe-area-inset-bottom,0px));z-index:260;display:flex;gap:12px;align-items:center;max-width:calc(100vw - 32px);background:var(--gx-s2);color:var(--gx-ink);border:1px solid var(--gx-line);padding:8px 8px 8px 16px;border-radius:18px;font:600 15px/1.3 var(--gx-ui)}
+#grun-toast:not(:has(button)){padding:12px 18px}
+#grun-toast button{min-height:44px;border:0;border-radius:22px;background:var(--gx-y);color:var(--gx-on);font:700 15px/1 var(--gx-ui);padding:0 16px;cursor:pointer;white-space:nowrap}
+body:not(.grun-has-nav) #grun-toast{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+#grun-saved{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));right:12px;z-index:270;background:var(--gx-g);color:var(--gx-on);font:700 13px/1 var(--gx-ui);padding:8px 12px;border-radius:99px;opacity:0;transform:translateY(-6px);transition:opacity .2s,transform .2s;pointer-events:none}
+#grun-saved.on{opacity:1;transform:none}
+/* barre de complétude (dossier) */
+.grun-compl{border:1px solid var(--gx-line);border-radius:18px;background:var(--gx-s1);padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.grun-compl .gc-h{display:flex;gap:10px;align-items:center}.grun-compl .gc-h b{white-space:nowrap}.grun-compl .gc-bar{flex:1}
+.grun-compl ul{margin:0;padding-left:18px;font-size:14.5px;color:var(--gx-mute)}
+.grun-compl ul b{color:var(--gx-ink);font-weight:600}
+.grun-compl .gs-btn{align-self:flex-start}
+.grun-compl.ok{padding:10px 16px}
+/* action principale en bas (zone du pouce), au-dessus de la barre du bas */
+.grun-actbar{position:sticky;bottom:calc(var(--nav-h,62px) + env(safe-area-inset-bottom,0px) + 8px);z-index:20;display:flex;gap:8px;margin-top:16px}
+body:not(.grun-has-nav) .grun-actbar{bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+.grun-actbar>*{flex:1;min-height:52px}
+/* visite guidée, schéma */
+.gv h3{font-family:var(--gx-cond);font-weight:800;font-size:1.8em;margin:6px 0 8px;line-height:1.05;text-transform:uppercase;letter-spacing:.02em}
+.gv-dots{display:flex;gap:6px}.gv-dots i{width:24px;height:5px;border-radius:9px;background:var(--gx-line)}.gv-dots i.vu{background:var(--gx-mute)}.gv-dots i.on{background:var(--gx-y)}
+.grun-schema{width:100%;max-width:440px;display:block;margin:12px auto 0;font-family:var(--gx-cond)}
+.grun-schema .s-court rect,.grun-schema .s-court path{fill:none;stroke:var(--gx-g);stroke-opacity:.4;stroke-width:1.5}
+.grun-schema .s-court .s-net{stroke:var(--gx-y);stroke-opacity:1;stroke-width:2.5;stroke-dasharray:2 5;stroke-linecap:round}
+.grun-schema .s-p{fill:var(--gx-s2);stroke:var(--gx-line);stroke-width:1}
+.grun-schema .s-n{fill:#0B0F0D;stroke:var(--gx-y);stroke-width:1.5}
+.grun-schema text{fill:var(--gx-ink);text-anchor:middle}
+.grun-schema .s-t{font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:.04em}
+.grun-schema .s-s{font-family:var(--gx-ui);font-size:11.5px;fill:var(--gx-mute)}
+.grun-schema .s-w{font-weight:800;font-size:19px;letter-spacing:.05em}
+.grun-doll{margin-top:10px}.grun-doll div{border:1.5px solid var(--gx-y);border-radius:16px;padding:10px 12px 12px;font-weight:700;color:var(--gx-ink);background:transparent}.grun-doll div div{margin-top:8px;background:rgba(228,255,58,.06)}.grun-doll div div div{background:var(--gx-y);color:var(--gx-on)}
+.grun-demo-bar{display:flex;gap:14px;align-items:center;justify-content:center;margin-top:10px}
+.grun-chip.demo{pointer-events:none}
+.grun-plus-demo{width:46px;height:46px;border-radius:50%;background:var(--gx-y);color:var(--gx-on);display:inline-flex;align-items:center;justify-content:center;font:700 28px/1 var(--gx-ui)}
+html.grun-sheet-on body{overflow:hidden}
+@media print{.grun-topx,#grun-toast,#grun-saved,.grun-ov,.grun-actbar{display:none!important}}
+/* barre du haut des modules sur téléphone : le joueur en cours se réduit à son initiale, le titre s'abrège */
+html.grun-mod .topin .brand{min-width:0;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
+@media (max-width:430px){.grun-chip .gc-nm{display:none}.grun-chip{padding:0 4px;max-width:none}.grun-topx{gap:4px}}
+@media (min-width:431px){.grun-chip:has(.gc-av.vide){max-width:none}.grun-chip:has(.gc-av.vide) .gc-nm{overflow:visible}}
+/* VÉRIF E1 (20 oct.) — barre du haut des modules sur téléphone : retour rond identique à l'accueil, recherche repliée en loupe ronde
+   (elle s'ouvre au toucher et reste ouverte tant qu'un mot est tapé), titre seul à gauche : pas de champ tronqué. */
+html.grun-mod #back{font-size:0!important;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;min-width:44px;padding:0;border-radius:22px;flex:0 0 44px}
+html.grun-mod #back::before{content:"";width:20px;height:20px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 5l-7 7 7 7'/%3E%3C/svg%3E") center/20px no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15 5l-7 7 7 7'/%3E%3C/svg%3E") center/20px no-repeat}
+@media (max-width:600px){
+  html.grun-mod .topin .sbox{flex:0 0 44px;width:44px;margin-left:auto}
+  html.grun-mod .topin .sbox input{padding:0 0 0 44px;cursor:pointer}
+  html.grun-mod .topin .sbox input::placeholder{color:transparent}
+  html.grun-mod .topin .sbox svg{left:13px;pointer-events:none}
+  html.grun-mod .topin .sbox:focus-within,html.grun-mod .topin .sbox:has(input:not(:placeholder-shown)){flex:1 1 auto;width:auto;margin-left:0}
+  html.grun-mod .topin .sbox:focus-within input,html.grun-mod .topin .sbox:has(input:not(:placeholder-shown)) input{padding-left:40px;cursor:text}
+  html.grun-mod .topin .sbox:focus-within input::placeholder{color:var(--gx-mute)}
+  html.grun-mod .topin:has(.sbox:focus-within) .brand,html.grun-mod .topin:has(.sbox input:not(:placeholder-shown)) .brand{display:none}
+}
+/* action principale du bas : un libellé long se coupe proprement (…) au lieu de déborder des deux côtés */
+.grun-actbar .gs-btn:only-child{display:block;line-height:50px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#grun-nav[data-mode="outils"]{grid-template-columns:minmax(0,.82fr) repeat(3,minmax(0,.9fr)) minmax(0,1.38fr)}
+
+/* 2 nov. : plus de puce « joueur en cours » (ancienne architecture) ; « Plus de filtres » = un bouton qui ouvre une feuille */
+.grun-chip{display:none!important}
+details.fplus>summary,details.grun-plus>summary{display:inline-flex!important;align-items:center;min-height:44px;padding:0 16px!important;border:1px solid var(--gx-line,#2a302d);border-radius:999px;cursor:pointer}
+details.fplus>summary::before,details.grun-plus>summary::before{content:""!important}
+.gs-fplus .frow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+details.fplus[open]>*:not(summary),details.grun-plus[open]>*:not(summary){display:none!important}
+.gs-fplus details>summary{pointer-events:none;list-style:none;font-weight:700;margin-top:6px}.gs-fplus details>summary::-webkit-details-marker{display:none}
+</style>
+<script src="visuels.js?v=3.0"></script>
+<script src="schema.js?v=3.0"></script>
+<script src="grun.js?v=3.0"></script><script src="motion.js?v=d5"></script>
+<script src="assistant.js?v=3.0"></script>
+<meta name="grun-module" content="veille"></head><body><title>Banque scientifique</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Layout : barre fixe (retour, recherche) ; accueil = recherche, accès direct, 4 portes, favoris ; document = fil d'Ariane, sommaire, L'essentiel ouvert, Le détail en sections dépliables */
+:root{
+  --bg:#07090A; --panel:#111614; --ink:#F2F5F0; --mute:#9AA59E; --line:#263029; --soft:#1A211D; --mark:#4A5216;
+  --ui:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --read:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fs:17px; color-scheme:dark;
+  --p1:#B9A2FF; --p2:#FF9F6B; --p3:#7CC8FF; --p4:#E4FF3A; --acc:#E4FF3A;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.45;margin:0;-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:var(--ink)}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.topin{max-width:1100px;margin:0 auto;padding-block:8px;padding-inline:16px;display:flex;gap:8px;align-items:center}
+.ib{min-width:40px;min-height:40px;border:1px solid var(--line);background:var(--panel);border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-weight:600;padding:0 10px;white-space:nowrap}
+.brand{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:.01em;white-space:nowrap;text-decoration:none}
+.sbox{flex:1;min-width:0;position:relative}
+.sbox input{width:100%;min-height:40px;border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:0 12px 0 34px}
+.sbox svg{position:absolute;left:10px;top:11px;width:18px;height:18px;stroke:var(--mute)}
+main{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:16px 60px}
+h1{font-family:var(--display);font-weight:700;font-size:30px;line-height:1.1;margin:0;text-wrap:balance}
+.lead{color:var(--mute);margin:4px 0 0}
+.sec{margin-top:22px}
+.sec>h2{font-family:var(--display);font-size:21px;font-weight:700;margin:0 0 8px}
+.doors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:640px){.doors{grid-template-columns:minmax(0,1fr)}}
+.door{display:flex;flex-direction:column;gap:6px;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;border-top:4px solid var(--pc)}
+.door b{font-family:var(--display);font-size:24px;color:var(--pc);line-height:1.1}
+.door span{color:var(--mute);font-size:14px}
+.door small{color:var(--mute);font-size:12.5px}
+.quick{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.f{display:flex;flex-direction:column;gap:3px;min-width:0}
+.f label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+.f select{min-height:40px;border:1px solid var(--line);border-radius:8px;background:var(--panel);padding:0 8px;max-width:100%}
+.go{min-height:40px;border-radius:8px;border:none;background:var(--ink);color:var(--bg);font-weight:600;padding:0 16px}
+.list{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.li{display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;padding:10px 14px;text-decoration:none;border-top:1px solid var(--line);align-items:baseline}
+.li:first-child{border-top:none}
+.li .code{font-variant-numeric:tabular-nums;color:var(--mute);font-size:13px}
+.li .tt{font-size:15px}
+.li .tt small{display:block;color:var(--mute);font-size:12.5px;margin-top:1px}
+.fold{margin-top:12px}
+.fold>h3{font-family:var(--display);font-size:19px;margin:16px 0 6px;color:var(--pc)}
+.crumb{font-size:13px;color:var(--mute);display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
+.crumb a{text-decoration:none;color:var(--pc);font-weight:600}
+.dochead{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:flex-start;margin-top:6px}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.star[aria-pressed=true]{color:#B7791F;border-color:#B7791F}
+.toc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-top:14px;font-size:14px}
+.toc b{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+.toc ol{margin:6px 0 0;padding-left:18px;columns:2;column-gap:28px}
+@media (max-width:640px){.toc ol{columns:1}}
+.toc a{text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.doc{font-family:var(--read);font-size:var(--fs);line-height:1.6;margin-top:10px}
+.doc p,.doc li{max-width:72ch}
+.doc h2{font-family:var(--display);font-size:1.35em;letter-spacing:.04em;margin:26px 0 8px;color:var(--pc)}
+.doc .ess{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--pc);border-radius:10px;padding:4px 18px 10px}
+.doc .ess h2{margin-top:12px}
+.doc details{border-top:1px solid var(--line);padding:2px 0}
+.doc summary{font-family:var(--ui);font-weight:600;font-size:1.02em;padding:10px 0;cursor:pointer;list-style:none;display:flex;gap:10px;align-items:baseline}
+.doc summary::-webkit-details-marker{display:none}
+.doc summary::before{content:"+";display:inline-block;width:1em;color:var(--pc);font-weight:700}
+.doc details[open]>summary::before{content:"–"}
+.doc h4{font-family:var(--ui);font-size:.98em;margin:16px 0 4px;color:var(--pc)}
+.doc h5,.doc h6{font-family:var(--ui);font-size:.92em;margin:12px 0 4px}
+.tw{overflow-x:auto;margin:10px 0;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.doc table{border-collapse:collapse;font-family:var(--ui);font-size:.82em;line-height:1.4;min-width:100%}
+.doc th,.doc td{border-bottom:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+.doc th{background:var(--soft);font-weight:600}
+.doc blockquote{margin:10px 0;padding:6px 14px;border-left:3px solid var(--line);color:var(--mute)}
+.ref{color:var(--pc);font-weight:600;text-decoration:none;border-bottom:1px dotted currentColor}
+.bq,.ex{font-family:var(--ui);font-size:.82em;background:var(--soft);border-radius:5px;padding:1px 5px;white-space:nowrap}
+mark{background:var(--mark);color:inherit;border-radius:2px}
+.doc details,.doc h4,.doc h5,.doc tr,.doc mark{scroll-margin-top:78px}
+.flash{animation:fl 1.6s ease}
+@keyframes fl{0%{background:var(--mark)}100%{background:transparent}}
+@media (prefers-reduced-motion: reduce){.flash{animation:none}}
+.pn{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:26px}
+.pn a{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-decoration:none;font-size:14px}
+.pn a small{display:block;color:var(--mute);font-size:12px}
+.pn a.nx{text-align:right}
+.notes{margin-top:22px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.notes textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);resize:vertical}
+.res{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;text-decoration:none;display:block}
+.res+.res{margin-top:8px}
+.res .t{font-weight:600}
+.res .w{color:var(--mute);font-size:12.5px}
+.res .s{font-family:var(--read);font-size:14.5px;margin-top:4px;color:var(--ink)}
+.empty{color:var(--mute);padding:14px;background:var(--panel);border:1px dashed var(--line);border-radius:12px}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+.msg{font-size:13.5px;color:var(--mute)}
+.load{padding:40px 0;color:var(--mute)}
+.lines{margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+.lines>b{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+.lrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.lrow>span{font-weight:600;font-size:14px;margin-right:4px}
+.lk{min-height:34px;border:1px solid var(--line);background:var(--bg);border-radius:999px;display:inline-flex;align-items:center;padding:0 12px;font-size:13.5px;font-weight:600;text-decoration:none;white-space:nowrap}
+.lk.pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.lgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+@media (max-width:640px){.lgrid{grid-template-columns:minmax(0,1fr)}}
+.resume{display:flex;flex-direction:column;gap:2px;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--pc);border-radius:12px;padding:12px 16px}
+.resume small{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+.resume b{font-size:16px} .resume span{color:var(--pc);font-size:14px;font-weight:600}
+details.toc>summary{cursor:pointer;font-weight:600;font-size:14px;list-style:none;min-height:30px;display:flex;align-items:center}
+details.toc>summary::-webkit-details-marker{display:none}
+details.toc>summary::before{content:"+";width:1.1em;color:var(--pc);font-weight:700}
+details.toc[open]>summary::before{content:"–"}
+/* « L'essentiel en 30 secondes », parcours de lecture, action principale en bas (§10) */
+.e30{margin-top:12px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--pc,var(--ink));border-radius:12px;padding:10px 16px 12px}
+.e30>b{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--pc,var(--mute))}
+.e30 ul{margin:6px 0 0;padding-left:18px;font-family:var(--read);font-size:calc(var(--fs) - 1px);line-height:1.5}
+.e30 li{margin:4px 0;max-width:72ch} .e30 li::marker{color:var(--pc,var(--mute))}
+.e30 .msg{margin:6px 0 0;font-size:12.5px}
+.pcs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:900px){.pcs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.pcs{grid-template-columns:minmax(0,1fr)}}
+.pcx{display:flex;flex-direction:column;gap:4px;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;border-left:4px solid var(--pc);min-height:44px}
+.pcx b{font-family:var(--display);font-size:20px;line-height:1.1;color:var(--pc)} .pcx span{color:var(--mute);font-size:13.5px}
+.pcx small{font-size:12.5px;font-weight:600;color:var(--ink)} .pcx small.ok{color:var(--pc)}
+.pbar{height:5px;border-radius:9px;background:var(--soft);overflow:hidden;margin-top:2px} .pbar i{display:block;height:100%;background:var(--pc)}
+.steps{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.steps a{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;align-items:start}
+.steps .n{width:30px;height:30px;border-radius:50%;border:2px solid var(--pc);color:var(--pc);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.steps .lu .n{background:var(--pc);color:var(--bg)}
+.steps .tt b{display:block;font-size:15.5px} .steps .tt span{display:block;color:var(--mute);font-size:13.5px;margin-top:2px;font-family:var(--read)}
+.steps .tt em{font-style:normal;font-size:12px;font-weight:600;color:var(--pc)}
+.pcbar{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;background:var(--soft);border-radius:10px;padding:8px 12px;font-size:14px}
+.pcbar a{color:var(--pc);font-weight:600;text-decoration:none}
+.grun-actbar .gs-btn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html.grun-simple .doc .bq{display:none} html:not(.grun-simple) .ref .sx,html:not(.grun-simple) .exf .sx{display:none}
+/* audit 26 oct. : une famille citée affiche son nom (plus long que le code) : la pastille revient à la ligne au lieu de déborder */
+.doc a.exf.nom{white-space:normal;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.lgrid a{font-size:13.5px;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 10px;border-left:4px solid var(--pc)}
+/* ===== GRÜN · design E « Night court » (refonte, étape 1, 20 oct. 2026) : UN seul thème, sombre, quel que soit le réglage de l'appareil =====
+   Fond #07090A · cartes #111614 bord #263029 · champs #1A211D · texte #F2F5F0 / #9AA59E · accent jaune balle #E4FF3A · vert #3BE08A.
+   Titres : Barlow Condensed 800 capitales espacées ; texte : Barlow. Boutons ≥ 44 px ; pas d'ombre lourde, pas de dégradé. */
+html{color-scheme:dark;background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui)}
+::selection{background:#E4FF3A;color:#07090A}
+:focus-visible{outline:2px solid #E4FF3A;outline-offset:2px}
+h1{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em;line-height:1.02}
+h2,h3{font-family:var(--display)}
+.sec>h2{font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:.14em;color:var(--mute)}
+.lead{color:var(--mute)}
+.top{background:#07090A;border-bottom:1px solid #1A211D}
+.brand{font-family:var(--display);font-weight:800;font-size:17px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink);overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ib,.btn{min-height:44px;min-width:44px;border-radius:22px;background:#111614;border:1px solid #263029;color:var(--ink);padding-inline:14px}
+.ib:hover,.btn:hover{background:#1A211D}
+a.ib,a.btn,a.go{text-decoration:none}
+.btn.sm{min-height:38px;border-radius:19px}
+.go,.btn.pri,.lk.pri{min-height:44px;border-radius:22px;background:#E4FF3A;color:#07090A;border:1px solid #E4FF3A;font-weight:700}
+.go:hover,.btn.pri:hover{background:#F0FF8A}
+.go:disabled,.btn.pri:disabled{opacity:.5}
+.sbox input{min-height:44px;border-radius:22px;background:#1A211D;border:1px solid #263029;color:var(--ink)}
+.sbox input::placeholder{color:#9AA59E}
+.sbox svg{top:13px;stroke:#9AA59E}
+input,select,textarea{color:var(--ink);accent-color:#E4FF3A}
+input::placeholder,textarea::placeholder{color:#7F8A83}
+input[type=text],input[type=search],input[type=number],input[type=date],input[type=url],input[type=email],input[type=tel],select,textarea{background-color:#1A211D;border-color:#263029}
+.crumb{color:var(--mute)}
+.crumb a{color:var(--pc,#E4FF3A)}
+.empty{background:#111614;border:1px dashed #263029;border-radius:18px;color:var(--mute)}
+.msg{color:var(--mute)}
+.door,.list,.res,.toc,.notes,.quick,.lines,.resume,.e30,.pcx,.card,.fiche,.form,.filters,.fam,.intro,.prop,.box,.pn a,.steps a{border-radius:18px;border-color:#263029;box-shadow:none}
+.door b,.pcx b{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.fold>h3{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:16px}
+.chip,.tab,.lk,.pill{border-color:#263029}
+.ref{color:var(--pc,#E4FF3A)}
+mark{background:var(--mark);color:#F2F5F0}
+.star[aria-pressed=true]{color:#E4FF3A;border-color:#E4FF3A}
+.modal{background:rgba(7,9,10,.78)}
+table{color:var(--ink)}
+/* Veille · design E : accents de couleur sans liseré épais (titres colorés), lecture Barlow 17 px */
+.door,.resume,.e30,.pcx,.lgrid a,.doc .ess{border-width:1px;border-style:solid;border-color:#263029}
+.door{padding:16px 18px}
+.door b{font-size:22px}
+.dochead h1,main>h1{font-size:28px}
+.doc{font-family:var(--ui);font-size:17px;line-height:1.65}
+.doc h2{font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:1.1em}
+.doc .ess{border-radius:18px;padding:6px 20px 12px}
+.doc summary{font-weight:600}
+.doc th{background:#1A211D;color:var(--ink)}
+.tw{border-radius:14px;border-color:#263029;background:#111614}
+.e30>b,.resume small,.toc b,.lines>b,.f label{letter-spacing:.14em;font-family:var(--display);font-size:12.5px}
+.e30 ul{font-family:var(--ui)}
+.steps .tt span{font-family:var(--ui)}
+.steps .lu .n{color:#07090A}
+.pbar{background:#1A211D;height:4px}
+.lk{min-height:38px;border-radius:19px;background:#111614}
+.f select{min-height:44px;border-radius:12px;background:#1A211D}
+.pcbar{background:#111614;border:1px solid #263029;border-radius:14px}
+.bq,.ex{background:#1A211D;color:var(--ink);white-space:normal;overflow-wrap:anywhere}
+.res .s{font-family:var(--ui)}
+.notes textarea{background:#1A211D;border-color:#263029;border-radius:12px}
+@media print{:root{--bg:#FFFFFF;--panel:#FFFFFF;--ink:#16202E;--mute:#5D6675;--line:#D9DDE3;--soft:#F1F3F5;--mark:#FFE58A;color-scheme:light} html,body{background:#fff!important;color:#16202E} .top{display:none}}
+/*VX-CSS-DEBUT*/
+/* ===== GRÜN · E1B « design intérieur imagé » (maquettes F1-F6 validées le 20 oct. 2026) — bloc commun, IDENTIQUE dans les 7 modules
+   (veille, banque, saisons, grilles, programmation, seances, routines) : héros, cartes illustrées, cartes d'exercice, pastilles, onglets segmentés,
+   « L'essentiel » numéroté. Visuels : window.GRUN_VIS (apps/grun/visuels.js). Source unique : RAPPORT_E1B_MODULES.md. ===== */
+:root{--vx-hd:61px}
+#vxh[hidden]{display:none!important}
+.vx-hero{position:relative;margin-top:calc(-1 * var(--vx-hd));padding-top:var(--vx-hd);min-height:calc(var(--vx-hd) + 180px);display:flex;align-items:flex-end;overflow:hidden;background:#07090A}
+.vx-hero.bas{min-height:calc(var(--vx-hd) + 128px)}
+.vx-vis{position:absolute;top:calc(var(--vx-hd) - 12px);right:0;bottom:6px;width:min(60%,520px);pointer-events:none}
+.vx-hero.large .vx-vis{top:calc(var(--vx-hd) - 24px);bottom:0;width:100%;max-width:none}
+.vx-hero.large:not(.bas){min-height:calc(var(--vx-hd) + 236px)} /* vérif E1B : place pour le visuel au-dessus du texte (le visuel s'efface derrière le texte, cf. G.heroDegager) */
+.vx-hero.bas .vx-vis{width:min(48%,400px)}
+.vx-vis svg{display:block;width:100%;height:100%}
+/* petits visuels (cartes, outils) : posés en haut à droite, au-dessus du titre (jamais sous le texte) */
+.vx-hero:not(.large):not(.sq){padding-top:calc(var(--vx-hd) + 98px);min-height:0}
+.vx-hero:not(.large):not(.sq) .vx-vis{top:calc(var(--vx-hd) - 8px);bottom:auto;height:108px;width:min(60%,380px)}
+.vx-hero.bas:not(.large):not(.sq){padding-top:calc(var(--vx-hd) + 70px)}
+.vx-hero.bas:not(.large):not(.sq) .vx-vis{height:78px}
+.vx-hero.sq{padding-top:calc(var(--vx-hd) + 128px)}
+.vx-hero.sq .vx-vis{left:max(16px,calc(50% - 534px));right:auto;top:calc(var(--vx-hd) + 2px);bottom:auto;width:112px;height:112px;border-radius:24px;background:#0B1A14;border:1px solid #1A2E24;overflow:hidden}
+.vx-in{position:relative;width:100%;max-width:1100px;margin:0 auto;padding:0 16px 18px;box-sizing:border-box}
+.vx-txt{display:flex;flex-direction:column;gap:8px;max-width:820px;text-shadow:0 0 3px #07090A,0 0 16px #07090A}
+.vx-lab{font:600 13px/1.25 var(--display,"Barlow Condensed",sans-serif);letter-spacing:.22em;text-transform:uppercase;color:#3BE08A}
+.vx-hero h1.vx-h{font-family:var(--display,"Barlow Condensed",sans-serif);font-weight:800;font-size:46px;line-height:.92;letter-spacing:.01em;text-transform:uppercase;color:#F2F5F0;margin:0;text-wrap:balance;overflow-wrap:normal}
+.vx-hero h1.vx-h.l2{font-size:34px;line-height:.95}
+.vx-hero h1.vx-h.l3{font-size:27px;line-height:1}
+.vx-hrow{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.vx-hrow .vx-h{min-width:0}
+.vx-num{flex:0 0 auto;font:700 22px/1 var(--display,"Barlow Condensed",sans-serif);color:#E4FF3A;letter-spacing:.02em;padding-bottom:3px;white-space:nowrap}
+.vx-sous{margin:0;font:400 14px/1.4 var(--ui,"Barlow",sans-serif);color:#9AA59E;max-width:60ch}
+.vx-sous b{font:700 18px/1 var(--display,"Barlow Condensed",sans-serif);color:#E4FF3A;letter-spacing:.02em}
+@media (min-width:700px){.vx-hero{min-height:calc(var(--vx-hd) + 200px)}.vx-hero.bas{min-height:calc(var(--vx-hd) + 140px)}.vx-hero h1.vx-h{font-size:52px}.vx-hero h1.vx-h.l2{font-size:40px}.vx-hero h1.vx-h.l3{font-size:32px}.vx-in{padding-bottom:22px}}
+/* barre du haut posée sur le héros : transparente en haut de page, pleine dès qu'on fait défiler ; le titre du module revient alors */
+body.vx-on .top{background:transparent;border-bottom-color:transparent;transition:background-color .18s,border-color .18s}
+body.vx-on.vx-sc .top{background:#07090A;border-bottom-color:#1A211D}
+body.vx-on:not(.vx-sc) .top .brand{visibility:hidden}
+body.vx-on #main{padding-top:14px}
+/* cartes illustrées (F2, F3, F6) */
+.vx-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.vx-c{position:relative;display:block;overflow:hidden;box-sizing:border-box;min-height:172px;border-radius:22px;background:#111614;border:1px solid #263029;color:#F2F5F0;text-decoration:none;text-align:left;font:inherit;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s,background-color .12s}
+.vx-c:hover{background:#141A17}
+.vx-c:active{transform:scale(.985)}
+.vx-c.big,.vx-c.row,.vx-c.full{grid-column:1/-1}
+.vx-c.big{min-height:150px}
+.vx-cv{position:absolute;left:0;top:0;width:100%;height:104px;display:block}
+.vx-cv svg{display:block;width:100%;height:100%}
+.vx-c.big .vx-cv{height:100%}
+.vx-ct{position:absolute;left:16px;right:12px;bottom:14px;display:flex;flex-direction:column;gap:4px}
+.vx-c.big .vx-ct{left:18px;bottom:16px;max-width:62%}
+.vx-n{font:600 12px/1 var(--display,"Barlow Condensed",sans-serif);letter-spacing:.22em;color:#3BE08A}
+.vx-t{font-family:var(--display,"Barlow Condensed",sans-serif);font-weight:800;font-size:24px;line-height:.98;text-transform:uppercase;letter-spacing:.01em;overflow-wrap:normal;word-break:normal}
+.vx-c.big .vx-t,.vx-c.row .vx-t{font-size:26px}
+.vx-s{font:400 13px/1.35 var(--ui,"Barlow",sans-serif);color:#9AA59E;text-transform:none;letter-spacing:0}
+.vx-s b{font:700 17px/1 var(--display,"Barlow Condensed",sans-serif);color:#F2F5F0}
+.vx-c.row{min-height:124px;display:flex;align-items:center}
+.vx-c.row .vx-ct{position:static;flex:1 1 auto;min-width:0;padding:16px 8px 16px 18px}
+.vx-c.row .vx-cv{position:relative;flex:0 0 120px;width:120px;height:124px;align-self:stretch}
+.vx-c.mini{min-height:132px}.vx-c.mini .vx-cv{height:84px}.vx-c.mini .vx-t{font-size:21px}
+.vx-cards.c3m{grid-template-columns:repeat(3,minmax(0,1fr))}
+.vx-cards.c3m .vx-c{min-height:132px}.vx-cards.c3m .vx-cv{height:76px}.vx-cards.c3m .vx-ct{left:12px;right:8px;bottom:12px}.vx-cards.c3m .vx-t{font-size:19px}.vx-cards.c3m .vx-s{font-size:12px}
+.vx-c.on{border-color:#E4FF3A;box-shadow:inset 0 0 0 1px #E4FF3A}
+@media (min-width:700px){.vx-cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.vx-cards.c2{grid-template-columns:repeat(2,minmax(0,1fr))}.vx-cards.c3{grid-template-columns:repeat(3,minmax(0,1fr))}.vx-c{min-height:190px}.vx-cv{height:128px}.vx-c.big{min-height:170px}.vx-c.row{min-height:128px}.vx-c.mini{min-height:150px}.vx-c.mini .vx-cv{height:96px}}
+/* carte d'exercice (F5) : mini-schéma 84×84 à gauche, nom, « durée · joueurs · matériel » */
+.vx-exs{display:flex;flex-direction:column;gap:10px}
+@media (min-width:900px){.vx-exs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+.vx-ex{position:relative;display:flex;align-items:center;gap:14px;min-height:104px;box-sizing:border-box;padding:10px 12px 10px 10px;border-radius:20px;background:#111614;border:1px solid #263029;color:#F2F5F0;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.vx-ex:hover{background:#141A17}
+.vx-ex:active{transform:scale(.99)}
+.vx-ex .vx-mini{flex:0 0 84px;width:84px;height:84px;border-radius:14px;background:#0B1A14;display:block}
+.vx-ex .vx-et{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 auto}
+.vx-ex .vx-et b{font:600 17px/1.2 var(--ui,"Barlow",sans-serif);overflow-wrap:break-word}
+.vx-ex .vx-et small{font-size:13px;line-height:1.35;color:#9AA59E}
+.vx-ex.cmp{min-height:72px;padding:6px 10px 6px 6px;gap:12px}.vx-ex.cmp .vx-mini{flex-basis:58px;width:58px;height:58px;border-radius:12px}.vx-ex.cmp .vx-et b{font-size:15.5px}
+/* pastilles (actif jaune) et sous-filtres soulignés (F5) */
+.vx-pills,.vx-subs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 0}
+.vx-pills::-webkit-scrollbar,.vx-subs::-webkit-scrollbar{display:none}
+.vx-pill{flex:0 0 auto;min-height:36px;padding:0 14px;border-radius:18px;border:1px solid #263029;background:transparent;display:inline-flex;align-items:center;gap:6px;font-family:var(--display,"Barlow Condensed",sans-serif);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:#9AA59E;white-space:nowrap;text-decoration:none;cursor:pointer}
+.vx-pill:hover{color:#F2F5F0}
+.vx-pill[aria-pressed=true],.vx-pill[aria-selected=true],.vx-pill[aria-current=page],.vx-pill.on{background:#E4FF3A;border-color:#E4FF3A;color:#07090A}
+.vx-subs{gap:18px}
+.vx-sub{flex:0 0 auto;min-height:36px;padding:6px 0 4px;border:0;border-bottom:2px solid transparent;border-radius:0;background:none;font:400 15px/1.2 var(--ui,"Barlow",sans-serif);color:#9AA59E;white-space:nowrap;text-decoration:none;cursor:pointer}
+.vx-sub:hover{color:#F2F5F0}
+.vx-sub[aria-pressed=true],.vx-sub[aria-current=page],.vx-sub.on{color:#F2F5F0;font-weight:600;border-bottom-color:#E4FF3A}
+/* onglets en segment arrondi, actif jaune (F4) */
+.vx-seg{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:2px;background:#111614;border:1px solid #263029;border-radius:22px;padding:4px;margin:0 0 14px}
+.vx-seg>a,.vx-seg>button{min-height:38px;border:0;border-radius:18px;background:transparent;color:#9AA59E;display:flex;align-items:center;justify-content:center;padding:0 8px;font-family:var(--display,"Barlow Condensed",sans-serif);font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.vx-seg.scroll{grid-auto-columns:max-content;overflow-x:auto;scrollbar-width:none;justify-content:start}
+.vx-seg.scroll::-webkit-scrollbar{display:none}
+.vx-seg.scroll>a,.vx-seg.scroll>button{padding:0 14px}
+.vx-seg>[aria-current=page],.vx-seg>[aria-selected=true],.vx-seg>[aria-pressed=true]{background:#E4FF3A;color:#07090A}
+/* « L'essentiel » en carte, points numérotés 01, 02… en vert (F4) */
+.vx-ess{background:#111614;border:1px solid #263029;border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.vx-lt{font-family:var(--display,"Barlow Condensed",sans-serif);font-weight:700;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:#E4FF3A}
+.vx-pt{display:flex;gap:12px;align-items:baseline}
+.vx-pt>i{flex:0 0 auto;min-width:28px;font:normal 800 22px/1 var(--display,"Barlow Condensed",sans-serif);color:#3BE08A}
+.vx-pt>span{font-size:15px;line-height:1.45}
+ol.vx-nl,ul.vx-nl{list-style:none;margin:4px 0 6px;padding:0;counter-reset:vxn;display:flex;flex-direction:column;gap:12px}
+ol.vx-nl>li,ul.vx-nl>li{counter-increment:vxn;position:relative;padding-left:42px;margin:0;max-width:72ch}
+ol.vx-nl>li::before,ul.vx-nl>li::before{content:counter(vxn,decimal-leading-zero);position:absolute;left:0;top:0;font:800 22px/1.15 var(--display,"Barlow Condensed",sans-serif);color:#3BE08A}
+/* intertitres en capitales condensées (F4) */
+.vx-sh,.sec>h2{font-family:var(--display,"Barlow Condensed",sans-serif);font-weight:800;font-size:20px;letter-spacing:.04em;text-transform:uppercase;color:#F2F5F0;margin:0 0 10px}
+.sec>h2 small{font-family:var(--ui,"Barlow",sans-serif);font-weight:500;font-size:13px;letter-spacing:0;text-transform:none;color:#9AA59E;margin-left:6px}
+.vx-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.vx-sec{margin-top:22px}
+@media print{#vxh{display:none!important}}
+/*VX-CSS-FIN*/
+/* Veille · E1B (maquettes F3 + F4) : listes de documents en cartes, document lisible (Barlow 17 px, interligne 1,6, ligne ≤ 72 caractères) */
+.list{background:none;border:0;border-radius:0;overflow:visible;display:flex;flex-direction:column;gap:8px}
+.li{background:#111614;border:1px solid #263029;border-radius:18px;padding:14px 16px;align-items:center;min-height:56px}
+.li:hover{background:#141A17}
+.li .tt{font-weight:600;font-size:15.5px;line-height:1.3}
+.li .tt small{font-weight:400;margin-top:3px}
+.li .code{font-family:var(--display);font-weight:700;font-size:14px;color:#3BE08A}
+.fold>h3{font-weight:800;font-size:18px;letter-spacing:.06em;color:#F2F5F0;margin:22px 0 10px}
+.vx-doors{margin-top:2px}
+.vx-doors+.msg{margin-top:10px}
+.pcx{border-radius:20px;padding:14px 16px 12px;gap:6px}
+.plus-h{margin:2px 0 10px}
+.pcx b{font-size:21px;color:var(--ink)}
+.pcx .n2{font:600 12px/1 var(--display);letter-spacing:.22em;color:#3BE08A}
+.pbar i{background:#3BE08A}
+.pcx small.ok{color:#3BE08A}
+.resume{border-radius:20px;padding:14px 18px}
+.resume small{color:#3BE08A}
+.resume span{color:#E4FF3A}
+.lgrid a{border-radius:14px;padding:10px 12px;font-weight:600;background:#111614}
+details.fold>summary{font-family:var(--display);font-weight:800!important;font-size:18px;text-transform:uppercase;letter-spacing:.05em;min-height:40px;display:flex;align-items:center}
+.vdoc{max-width:780px}
+.vacts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}
+.vacts .pcbar{margin:0;flex:1 1 220px}
+.vacts .star{min-height:40px;border-radius:20px;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:14px}
+.doc{margin-top:0}
+.doc .ess{background:#111614;border:1px solid #263029;border-radius:22px;padding:16px 18px 10px;margin-bottom:16px}
+.doc .ess>h2:first-child{font-size:13px;font-weight:700;letter-spacing:.22em;color:#E4FF3A;margin:0 0 12px}
+.doc .ess ul.vx-nl>li{font-size:16px;line-height:1.5}
+.doc .ess p>strong:only-child{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.06em;font-size:15px;color:#9AA59E}
+.doc h2{font-weight:800;font-size:20px;letter-spacing:.04em;color:#F2F5F0;margin:28px 0 8px}
+.doc summary{font-family:var(--display);font-weight:700!important;font-size:19px;line-height:1.15;text-transform:uppercase;letter-spacing:.03em;padding:14px 0;min-height:44px;align-items:center}
+.doc summary>i{font-style:normal;font-weight:800;color:#3BE08A;min-width:30px}
+.doc summary::before{color:#9AA59E}
+.doc h4{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.05em;font-size:16px;color:#3BE08A}
+.doc table{font-size:15px}
+.doc th{font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:13px;color:#9AA59E}
+.doc td,.doc th{padding:9px 12px}
+.doc blockquote{background:#111614;border:1px solid #263029;border-left:3px solid #3BE08A;border-radius:14px;padding:10px 16px;color:#C9D2CC}
+.doc .tw+.tw{margin-top:12px}
+.lines{border-radius:20px;padding:14px 16px;margin:0 0 16px}
+.lines>b{color:#E4FF3A}
+.toc{margin:0 0 6px}
+.pn a{border-radius:18px;padding:12px 14px}
+/* Banque scientifique · étape 2 (21 oct. 2026) : 8 thèmes, rubriques, sélecteur âge + sexe */
+.agerow{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:0 0 14px}
+.agerow .msg{font-size:13px}
+.agep{min-height:44px;padding:0 16px;border-radius:22px;border:1px solid #E4FF3A;background:none;color:#E4FF3A;display:inline-flex;align-items:center;gap:8px;font:700 16px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.agep svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.agep:active{transform:scale(.97)}
+.agebar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 14px;font-size:13.5px;color:var(--mute)}
+.agebar b{font:700 16px/1 var(--display);letter-spacing:.08em;text-transform:uppercase;color:#E4FF3A}
+.agebar .agep{min-height:38px;font-size:15px}
+.doc details.age-on{border:1px solid #E4FF3A;border-radius:16px;padding:2px 14px 8px;margin:10px -4px;background:#0D110F}
+.doc details.age-on>summary::before{color:#E4FF3A}
+.agetag{font:700 11px/1 var(--display);letter-spacing:.16em;text-transform:uppercase;font-style:normal;color:#07090A;background:#E4FF3A;border-radius:10px;padding:4px 8px;margin-left:auto;white-space:nowrap}
+.doc .sx-on{border-left:3px solid #E4FF3A;padding-left:12px;margin-left:-2px}
+.doc h4.sx-on,.doc h5.sx-on{color:#E4FF3A}
+.doc tr.age-on td{background:#1F2410}
+.doc tr.age-on td:first-child{box-shadow:inset 3px 0 0 #E4FF3A;font-weight:700}
+.doc a.ex,.doc a.exf{font-family:var(--ui);font-size:.82em;background:#1A211D;color:#3BE08A;border:1px solid #263029;border-radius:6px;padding:1px 6px;text-decoration:none;white-space:nowrap}
+.doc a.ex:hover,.doc a.exf:hover{border-color:#3BE08A}
+.doc a.ref.rub{border-bottom-style:dashed}
+.fold>h3 small,.sec>h2 small{font-family:var(--ui);font-weight:500;font-size:13px;letter-spacing:0;text-transform:none;color:#9AA59E;margin-left:8px}
+.li.rubl{grid-template-columns:30px minmax(0,1fr)}
+.resume.entree{margin:0 0 16px;border-color:#3BE08A}
+.resume.entree .ex1{color:var(--mute);font-weight:400;font-size:14px;line-height:1.45}
+.refess{margin:0 0 6px}
+.refess .vx-pt>span b{color:#F2F5F0}
+.steps.chap a{grid-template-columns:34px minmax(0,1fr);position:relative;overflow:hidden;padding-right:84px;min-height:84px}
+.refblocs{margin-top:4px}
+/* I5 : visuel en haut à droite, titre dessous : jamais de chevauchement */
+.refblocs .vx-c.big{display:flex;flex-direction:column;min-height:0}
+.refblocs .vx-c.big .vx-cv{position:relative;left:auto;top:auto;align-self:flex-end;width:58%;height:96px;margin:14px 14px 0 0;flex:0 0 auto}
+.refblocs .vx-c.big .vx-ct{position:static;max-width:none;padding:10px 18px 18px}
+.steps.chap .cv{position:absolute;right:8px;top:10px;width:70px;height:64px;opacity:.85;pointer-events:none}
+.steps.chap .cv svg{width:100%;height:100%}
+.steps .lu .n{background:#3BE08A;border-color:#3BE08A}
+.steps .n{border-color:#3BE08A;color:#3BE08A}
+.steps .tt em{color:#E4FF3A}
+.vdoc.vref .doc details{border-top-color:#263029}
+.vdoc.vref .doc summary{color:#F2F5F0}
+@media (max-width:400px){.steps.chap a{padding-right:64px}.steps.chap .cv{width:52px;height:48px;right:6px;top:12px}}
+
+/* audit 26 oct. (0 débordement) : boutons longs de « Plus d'options » et blocs préformatés reviennent à la ligne */
+.grun-plusb .ib{max-width:100%;white-space:normal;text-align:center;height:auto;padding-block:6px}
+.doc pre{white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+
+<header class="top"><div class="topin">
+  <button class="ib" id="back" type="button" aria-label="Retour">‹</button>
+  <a class="brand" href="#">Banque scientifique</a>
+  <div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Rechercher dans la banque scientifique" autocomplete="off" enterkeyhint="search"></div>
+</div></header>
+<div id="vxh" hidden></div>
+<main id="main"><div class="load">Chargement de la banque scientifique…</div></main>
+
+<!--VX-DEBUT--><script>
+/* GRÜN · E1B — héros et cartes illustrées : bloc commun, IDENTIQUE dans les 7 modules (window.VX). Visuels : window.GRUN_VIS (visuels.js, chargé avant). */
+(function(){
+  "use strict";
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const V = () => window.GRUN_VIS || null;
+  const svg = (nom, o) => { const v = V(); return v && nom ? v.svg(nom, o || {}) : ""; };
+  const top = () => document.querySelector("header.top");
+  const box = () => document.getElementById("vxh");
+  let raf = 0;
+  function maj(){ const t = top(); if(t && t.offsetHeight) document.documentElement.style.setProperty("--vx-hd", t.offsetHeight + "px"); }
+  function sc(){ const h = box(), t = top(); const on = !h || h.hidden || scrollY > Math.max(8, h.offsetHeight - (t ? t.offsetHeight : 0) - 56); document.body.classList.toggle("vx-sc", on); }
+  addEventListener("scroll", () => { if(!raf) raf = requestAnimationFrame(() => { raf = 0; sc(); }); }, {passive:true});
+  addEventListener("resize", () => { maj(); sc(); });
+  /* titres des cartes et du héros : jamais coupés au milieu d'un mot ; si la police (de secours) est trop large, la taille baisse jusqu'à tenir */
+  function fit(){ document.querySelectorAll(".vx-t,.vx-h").forEach(el => { el.style.fontSize = ""; let fs = parseFloat(getComputedStyle(el).fontSize), n = 0;
+    while(el.scrollWidth > el.clientWidth + 1 && fs > 14 && n++ < 16){ fs -= 1.5; el.style.fontSize = fs + "px"; } }); }
+  let rf = 0; const plan = () => { if(!rf) rf = requestAnimationFrame(() => { rf = 0; fit(); }); };
+  function obs(){ const mo = new MutationObserver(plan); ["main", "vxh"].forEach(id => { const e = document.getElementById(id); if(e) mo.observe(e, {childList: true, subtree: true}); }); plan();
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(plan); }
+  addEventListener("resize", plan);
+  const taille = t => { const n = String(t || "").length; return n > 64 ? " l3" : n > 22 ? " l2" : ""; };
+  const VX = {
+    esc, svg,
+    pour: k => { const v = V(); return v ? v.pour(k) : "balles"; },
+    n2: i => String(i).padStart(2, "0"),
+    /* héros (bandeau imagé) : {vis, lab, titre, num (chiffre jaune à droite du titre), sous (html), bas (écran profond), large (visuel pleine largeur), sq (mini-schéma agrandi en vignette), par} ; VX.hero(null) le retire */
+    hero(o){ const h = box(); if(!h) return;
+      if(!o){ if(!h.hidden){ h.hidden = true; h.innerHTML = ""; } document.body.classList.remove("vx-on"); sc(); return; }
+      maj();
+      h.className = "vx-hero" + (o.bas ? " bas" : "") + (o.large ? " large" : "") + (o.sq ? " sq" : "");
+      h.innerHTML = `${o.vis ? `<div class="vx-vis">${svg(o.vis, {par: o.par || (o.large ? "xMaxYMax slice" : "xMaxYMid meet")})}</div>` : ""}<div class="vx-in"><div class="vx-txt">${o.lab ? `<span class="vx-lab">${esc(o.lab)}</span>` : ""}${o.num != null ? `<div class="vx-hrow"><h1 class="vx-h${taille(o.titre)}">${esc(o.titre)}</h1><span class="vx-num">${esc(o.num)}</span></div>` : `<h1 class="vx-h${taille(o.titre)}">${esc(o.titre)}</h1>`}${o.sous ? `<p class="vx-sous">${o.sous}</p>` : ""}</div></div>`;
+      h.hidden = false; document.body.classList.add("vx-on"); sc();
+      requestAnimationFrame(() => { maj(); sc(); }); },
+    /* carte illustrée : {href | (attrs + bouton), vis, n (numéro), t (titre), s (sous-titre html), k : "big" | "row" | "mini" | "", cls, attrs, par} */
+    carte(o){ const k = o.k || "", par = o.par || (k === "big" ? "xMaxYMid meet" : k === "row" ? "xMinYMid slice" : "xMidYMid meet"), tag = o.href ? "a" : "button";
+      return `<${tag} class="vx-c${k ? " " + k : ""}${o.cls ? " " + o.cls : ""}" ${o.href ? `href="${esc(o.href)}"` : `type="button"`}${o.attrs ? " " + o.attrs : ""}><span class="vx-cv">${svg(o.vis, {par})}</span><span class="vx-ct">${o.n != null ? `<span class="vx-n">${esc(o.n)}</span>` : ""}<span class="vx-t">${esc(o.t)}</span>${o.s ? `<span class="vx-s">${o.s}</span>` : ""}</span></${tag}>`; },
+    /* carte d'exercice (F5) : {href, id (préfixe → mini-schéma), nom, meta (html), extra (html), cls, attrs} */
+    ex(o){ return `<a class="vx-ex${o.cls ? " " + o.cls : ""}" href="${esc(o.href)}"${o.attrs ? " " + o.attrs : ""}>${svg(VX.pour(o.id), {w: 84, h: 84, cls: "vx-mini"})}<span class="vx-et"><b>${o.nomHtml != null ? o.nomHtml : esc(o.nom)}</b>${o.meta ? `<small>${o.meta}</small>` : ""}</span>${o.extra || ""}</a>`; },
+    /* « L'essentiel » numéroté : [texte html, …] */
+    fit,
+    ess(titre, pts){ return `<section class="vx-ess"><span class="vx-lt">${esc(titre)}</span>${pts.map((p, i) => `<div class="vx-pt"><i>${VX.n2(i + 1)}</i><span>${p}</span></div>`).join("")}</section>`; }
+  };
+  window.VX = VX;
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => { maj(); obs(); }); else { maj(); obs(); }
+})();
+</script><!--VX-FIN-->
+<script>
+"use strict";
+/* ===== Banque scientifique (étape 2, 21 oct. 2026 ; Référentiel retiré le 30 oct.) =====
+   Données : apps/veille/build_data.py publie redaction_v4/ selon plan/structure_v4.tsv (idx.json + paquets).
+   Adresses : #  accueil (8 thèmes) · #t/<n> thème · #r/<id> rubrique · #d/<code>[/s<i>|/a<âge>|/q<mots>] document · #/ref (ancien Référentiel) → accueil
+              #/l/<LIGNE> documents d'une ligne de grille · #/parcours/<id> · #s/<mots> recherche · #p/<n> (anciennes portes, redirigées)
+   Anciens codes v3 (favoris, notes, liens des autres modules) : table AL (data.al) → redirection et migration des préférences, clé veille_v1 inchangée. */
+const TYL = {"comprendre":"Comprendre", "âge par âge":"Âge par âge", "séances types":"Séances types", "autre":"Autres documents"};
+const TYO = ["comprendre","âge par âge","séances types","autre"];
+/* anciennes portes (v3) → thèmes : 1 → 1 Développement · 2 → 3 Préparation physique · 3 (geste et déplacement) → 4 Technique · 4 → 8 Entraîner */
+const PORTES = {"1":"1", "2":"3", "3":"4", "4":"8"};
+const ME_VIS = {"ME.1":"anneaux", "ME.2":"cordage", "ME.3":"courbe", "ME.4":"radar", "ME.5":"calendrier", "ME.6":"trajectoires", "ME.7":"seance", "ME.8":"marches", "ME.9":"frise", "ME.10":"club"};
+/* onglets segmentés d'une rubrique (comprendre / âge par âge / séances types) */
+const ONG = ty => ({"comprendre":"Comprendre", "âge par âge":"Âge par âge", "séances types":"Séances types"})[ty] || null;
+const PP = ["Force du bas du corps","Force du haut du corps","Gainage et stabilité du tronc","Puissance des jambes : sauts et pliométrie","Puissance du haut du corps et rotation","Vitesse et accélération","Freinage, changements de direction et agilité","Endurance aérobie","Répétition d'efforts intenses","Coordination, motricité fondamentale et rythme","Équilibre et proprioception","Mobilité et souplesse"];
+const GE = [["Service à plat","TE.2.9"],["Service slicé","TE.2.9"],["Service lifté","TE.2.9"],["Coup droit lifté","TE.4.8"],["Coup droit à plat","TE.4.8"],["Coup droit slicé","TE.4.8"],["Revers lifté","TE.5.8"],["Revers à plat","TE.5.8"],["Revers slicé","TE.5.8"],["Volée de coup droit","TE.6.5"],["Volée de revers","TE.6.5"],["Smash","TE.7.2"],["Amortie et touché de balle","TE.8.3"]];
+const DE = ["Position d'attention","Allègement et reprise d'appuis","Démarrage et premiers pas","Déplacements latéraux","Déplacements vers l'avant et vers l'arrière","Pas d'ajustement et mise à distance","Appuis de frappe","Freinage et décélération","Changement de direction et réaccélération","Replacement","Enchaînements et liaison des actions"];
+const RADAR = "grilles.html";
+/* parcours de lecture : des documents existants, dans un ordre qui se lit d'une traite (aucun contenu nouveau) — codes v4 */
+const PARCOURS = [
+  {id:"demarrer", n:"Démarrer", s:"Les repères de base pour entraîner un joueur de 0 à 18 ans, dans les 4 domaines.", d:["EN.1.8","EN.1.3","PP.0.1","TE.1.6","TA.1.3","PM.1.3","EN.2.6","EN.4.11","EN.6.6"]},
+  {id:"croissance", n:"Croissance et maturation", s:"Le pic de croissance, l'âge biologique et ce qu'ils changent à l'entraînement.", d:["EN.1.1","EN.1.2","PP.16.2","EN.1.3","EN.1.4","PP.15.2","PP.13.4","EN.1.9"]},
+  {id:"fille", n:"Prévention chez la fille", s:"Ce qui change chez la fille : maturation, genou, sauts, freinage, volumes, hygiène de vie.", d:["EN.1.5","EN.1.2","PP.15.10","PP.15.7","PP.7.2","PP.4.2","EN.4.6","EN.5.9"]},
+  {id:"echauffement", n:"Échauffement et récupération", s:"Construire un échauffement, le retour au calme, puis récupérer, en tournoi aussi, et dormir.", d:["PP.14.1","PP.14.2","PP.14.3","PP.14.4","PP.14.5","EN.5.2","EN.5.3","EN.5.4","EN.5.5","EN.5.10"]},
+  {id:"saison", n:"Planifier une saison", s:"De la démarche à la semaine type : cycles, programmation annuelle, compétitions, charge.", d:["EN.4.1","EN.4.3","EN.4.5","EN.4.6","EN.4.8","EN.4.9","EN.4.10","EN.4.2","EN.4.12"], plus:["prog.html","Construire une programmation (Create my prog)"]},
+  {id:"evaluer", n:"Évaluer et suivre", s:"Organiser les tests et les bilans, lire les valeurs de référence, suivre la fatigue et la santé.", d:["PP.16.1","PP.16.2","EN.2.7","PP.16.11","PP.16.12","PP.16.14"], plus:["grilles.html","Ouvrir Tests et profilage"]},
+  {id:"tactique", n:"Apprendre à jouer", s:"Les principes du jeu, les situations, lire le jeu et décider, de l'initiation au haut niveau.", d:["TA.1.1","TA.1.2","TA.1.3","TA.10.1","TA.10.2","TA.7.1","TA.1.4"]},
+  {id:"mental", n:"Le mental en match", s:"Ce que le tennis demande à la tête, la confiance, les émotions, les routines, avant, pendant et après le match.", d:["PM.1.1","PM.1.3","PM.2.1","PM.4.1","PM.7.1","PM.8.1","TA.8.1"]}
+];
+const PCB = Object.fromEntries(PARCOURS.map(x=>[x.id,x]));
+const GR = window.GRUN || null;
+/* nom clair d'un document (sans code) : « Vitesse et accélération · Comprendre et développer » plutôt que « PP.6.1 » */
+function nomClair(x){ if(!x) return "";
+  if(/^(Comprendre et développer|Âge par âge|Séances, routines)/.test(x.t) && x.d) return x.d + " · " + x.t.split(" : ")[0].replace(/, filles et garçons$/,"");
+  return x.t; }
+/* héros d'un document (audit 26 oct.) : titre précis + étiquette « thème · rubrique · type », sans code et sans répéter ce que le titre dit déjà.
+   Les 36 titres génériques des 12 qualités physiques (« Comprendre et développer : bases… ») cèdent la place au nom de la rubrique. */
+const TYC = {"comprendre":"Comprendre", "âge par âge":"Âge par âge", "séances types":"Séances types"};
+function heroDoc(x, T){
+  if(!T) return {lab:"Banque scientifique", titre:x.t};
+  const gen = /^(Comprendre et développer|Âge par âge|Séances, routines)/.test(x.t) && x.d && x.d!==T.t;
+  const titre = gen ? x.d : x.t, f = fold(titre), parts = [T.t];
+  if(!gen && x.d && x.d!==T.t && !f.includes(fold(x.d))) parts.push(x.d);
+  const ty = TYC[x.ty]; if(ty && !f.includes(fold(ty))) parts.push(ty);
+  return {lab: parts.join(" · "), titre}; }
+/* âge du joueur (ou du groupe) en cours, pour préremplir l'âge partout */
+function courant(){ try{ return GR&&GR.courant ? GR.courant.get() : null; }catch(e){ return null; } }
+function ageCourant(){ const c = courant(); if(!c) return null;
+  try{ if(c.t==="j") return GR.grilleConseillee(c.joueur);
+    const as = GR.groupes.joueurs(c.id).map(j=>GR.grilleConseillee(j)).filter(a=>a!=null).sort((a,b)=>a-b); return as.length ? as[Math.floor(as.length/2)] : null; }catch(e){ return null; } }
+const prenom = c => c ? (c.t==="j" ? String(c.nom||"").split(" ")[0] : c.nom) : "";
+/* âge + sexe de la Bibliothèque (G.ageBib : choix mémorisé, sinon joueur en cours) ; age 0 = 0-3 ans */
+function ageSel(){ if(GR&&GR.ageBib){ try{ return GR.ageBib(); }catch(e){ return null; } }
+  return P.ageBib && /^\d+$/.test(P.ageBib) ? {sexe:"", age:+P.ageBib, auto:false} : null; }
+const ageLab = a => a ? (a.sexe==="F" ? "Fille · " : a.sexe==="G" ? "Garçon · " : "") + (a.age<4 ? "0-3 ans" : a.age+" ans") : "Choisir un âge";
+const ageAppli = () => { const a = ageSel(); return a ? Math.max(4, Math.min(18, a.age||4)) : (ageCourant() || 10); };   /* outils (grilles, exercices) : 4-18 ans */
+function agePill(id){ return `<button type="button" class="agep" id="${id||"agep"}" aria-label="Âge et sexe de la bibliothèque : ${esc(ageLab(ageSel()))}. Changer">${esc(ageLab(ageSel()))}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>`; }
+function choisirAge(){
+  if(GR&&GR.ui&&GR.ui.choisirAgeBib){ GR.ui.choisirAgeBib().then(a=>{ if(a!==null || !GR.ageBib()) route(true); }); return; }
+  const v = prompt("Âge (0 pour 0-3 ans, ou 4 à 18) :", P.age||""); if(v==null) return; if(/^\d+$/.test(v.trim())){ P.ageBib = String(Math.min(18,+v)); save(); route(true); } }
+function aide(cle){ try{ GR&&GR.aide&&GR.aide.ecran&&GR.aide.ecran(cle); }catch(e){} }
+function titre(t){ document.title = t ? t+" · Banque scientifique" : "Banque scientifique · GRÜN"; }
+/* barre du bas : onglet Banque scientifique */
+function onglet(){ const br = document.querySelector(".brand"); if(br){ br.textContent = "Banque scientifique"; br.setAttribute("href", "#"); }
+  try{ if(GR&&GR.navMode&&!GR.isJoueur()&&!GR.seul) GR.navMode("biblio", "veille"); }catch(e){} }
+/* action principale en bas (zone du pouce) : [texte, href | fonction] */
+function actbar(t, act){ if(!t) return ""; return `<div class="grun-actbar"><${typeof act==="string"?`a href="${act}"`:"button type=\"button\" id=\"actmain\""} class="gs-btn main">${esc(t)}</${typeof act==="string"?"a":"button"}></div>`; }
+/* une phrase de « L'essentiel » : [titre en gras, suite] → texte (pas d'espace avant une ponctuation) */
+const e1txt = e => e ? (e[0] ? e[0] + (/^[,.)]/.test(e[1]||"") ? "" : " ") : "") + (e[1]||"") : "";
+function e30HTML(x, court){ const e = x.e||[]; if(!e.length) return "";
+  return `<section class="e30"><b>L'essentiel en 30 secondes</b><ul>${e.slice(0, court?2:4).map(([a,b])=>`<li>${a?`<strong>${esc(a)}</strong>${b?" ":""}`:""}${esc(b)}</li>`).join("")}</ul>${court?"":`<p class="msg">Phrases tirées du bloc « L'essentiel » ci-dessous.</p>`}</section>`; }
+
+let DOCS = [], BY = {}, NORM = null, LV = {L:{}, g:{}}, REV = {}, TH = [], RUB = {}, REF = [], AL = {}, FX = {};
+const LIGNES = {PP:PP, GE:GE.map(x=>x[0]), DE:DE};
+const LCOL = {PP:"#3BE08A", GE:"#3BE08A", DE:"#3BE08A"};
+const DOMN = {PP:"Préparation physique", GE:"Technique · les coups", DE:"Technique · les déplacements"};
+const okLig = l => /^(PP|GE|DE)\d{1,2}$/.test(l) && !!LIGNES[l.slice(0,2)][+l.slice(2)-1];
+const ligNom = l => LIGNES[l.slice(0,2)][+l.slice(2)-1];
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fold = s => { let o=""; for(const ch of s){ const d=ch.normalize("NFD")[0]; o += (d||ch).toLowerCase(); } return o; };
+const keyc = c => c.split(".").map(x=>isNaN(+x)?x:+x);
+
+/* ---------- préférences locales (clé historique veille_v1) ---------- */
+const ST = "veille_v1";
+function load(){ try{ return JSON.parse(localStorage.getItem(ST)) || {}; }catch(e){ return {}; } }
+let P = Object.assign({fav:[], rec:[], notes:{}, fs:17, age:"10", dom:"PP", ligne:"0", lu:[], pc:null}, load());
+if(!Array.isArray(P.lu)) P.lu = [];
+function save(){ try{ if(window.GRUN) GRUN.save(ST,P); else localStorage.setItem(ST, JSON.stringify(P)); }catch(e){} }
+document.documentElement.style.setProperty("--fs", P.fs+"px");
+/* anciens codes (v3) dans les favoris, l'historique, les notes : convertis une fois en codes v4 (rien n'est perdu ; notes fusionnées si deux anciens documents vont au même) */
+function migrer(){ let ch = false; const m = c => { if(BY[c] || !AL[c]) return c; ch = true; return AL[c].split("/")[0]; };
+  P.fav = [...new Set((P.fav||[]).map(m))]; P.rec = [...new Set((P.rec||[]).map(m))]; P.lu = [...new Set((P.lu||[]).map(m))];
+  for(const k of Object.keys(P.notes||{})){ if(BY[k] || !AL[k]) continue; const n = AL[k].split("/")[0], v = P.notes[k];
+    P.notes[n] = P.notes[n] && P.notes[n] !== v ? P.notes[n] + "\n\n" + v : v; delete P.notes[k]; ch = true; }
+  if(P.last && P.last.c && !BY[P.last.c] && AL[P.last.c]){ P.last = {c:AL[P.last.c].split("/")[0], s:null, st:""}; ch = true; }
+  if(ch) save(); }
+
+/* ---------- données ---------- */
+async function boot(){
+  if(window.GRUN){ GRUN.nav("res");
+    /* « ? » : une aide par écran */
+    [["veille","La Banque scientifique : les documents scientifiques en 8 thèmes, de 0 à 18 ans. Touche un thème, puis une rubrique. La pastille d'âge ouvre chaque document âge par âge sur la section de cet âge. « Accès direct », tout en bas, ouvre directement le portrait d'un âge ou une ligne à un âge."],
+     ["veille/d","Un document : « L'essentiel » en haut, puis le détail en sections dépliables. Les codes soulignés ouvrent l'autre document, les identifiants d'exercice ouvrent leur fiche. ☆ le garde en favori ; tes notes s'enregistrent seules."],
+     ["veille/t","Un thème de la banque scientifique : ses rubriques, puis dans chaque rubrique les documents pour comprendre, âge par âge, les séances types et les autres."],
+     ["veille/r","Une rubrique : ses documents pour comprendre, âge par âge, les séances types, puis les autres documents."],
+     ["veille/parcours","Un parcours de lecture : quelques documents dans le bon ordre. Les étapes lues se cochent seules ; le bouton du bas ouvre la suivante."],
+     ["veille/l","Tout sur une ligne de grille : exercices pour l'âge, séance prête à construire, grilles filles et garçons, puis les documents pour comprendre, situer l'âge et évaluer."],
+     ["veille/s","La recherche lit le texte complet de tous les documents. Touche un résultat : le document s'ouvre sur le passage surligné."]].forEach(([k,t])=>{ try{ GRUN.aide(k,t); }catch(e){} });
+    if(GRUN.isJoueur()){ $("#q").disabled=true; $("#main").innerHTML='<h1>Réservé au coach</h1><p class="lead">La banque scientifique est réservée au coach. En mode joueur, retrouve ton dossier, tes séances et tes tests.</p><div class="sec tools"><button class="go" id="jback" type="button">← Retour</button><a class="ib" href="index.html">Mon dossier</a></div>';
+      $("#jback").onclick=()=>{ if(history.length>1) history.back(); else location.href="index.html"; }; return; } }
+  try{
+    const r = await fetch("data-veille.json"); const d = await r.json();
+    DOCS = d.docs.filter(x=>x.th); DOCS.forEach((x,i)=>{ x.i=i; BY[x.c]=x; }); PF = d.pf || null; PH = d.ph || {};
+    if(d.lv) LV = d.lv; TH = d.th || []; REF = d.ref || []; AL = d.al || {}; FX = d.fx || {};
+    TH.forEach(T=>T.rub.forEach(R=>{ RUB[R.id] = Object.assign(R, {th:T.n}); }));
+    for(const [l,g] of Object.entries(LV.L||{})) for(const [k,cs] of Object.entries(g)) for(const c of cs) (REV[c]=REV[c]||[]).push([l,k]);
+  }catch(e){ $("#main").innerHTML = '<div class="empty">La banque scientifique n\'a pas pu se charger. Vérifie la connexion pour la première ouverture, puis recharge la page.</div>'; return; }
+  migrer();
+  route();
+  setTimeout(precharger, 1500);
+  $("#q").addEventListener("focus", ()=>{ tousPaquets().catch(()=>{}); }, {once:true});
+}
+/* ---------- chargement rapide : index léger au démarrage, texte des documents par paquets (data-veille-<n>.json) chargés à la demande ---------- */
+let PF = null, PH = {}; const PAQ = {};
+function paquet(k){
+  if(!PF || !k) return Promise.resolve();
+  return PAQ[k] || (PAQ[k] = fetch(PF+k+".json"+(PH[k]?"?v="+PH[k]:"")).then(r=>{ if(!r.ok) throw new Error("paquet "+k); return r.json(); })
+    .then(o=>{ for(const c in o) if(BY[c]) BY[c].h = o[c]; }).catch(e=>{ delete PAQ[k]; throw e; }));
+}
+function tousPaquets(){ return Promise.all([...new Set(DOCS.filter(x=>x.h==null).map(x=>x.k))].map(paquet)); }
+/* en arrière-plan, un paquet à la fois : la recherche tapée ensuite est immédiate */
+function precharger(){ const k = (DOCS.find(x=>x.h==null)||{}).k; if(!k) return; paquet(k).then(()=>setTimeout(precharger, 120), ()=>{}); }
+const ENT = {amp:"&", lt:"<", gt:">", quot:'"', apos:"'", nbsp:" "};
+const texte = h => h.replace(/<[^>]*>/g,"").replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (m,e)=> e[0]==="#" ? String.fromCodePoint(e[1]==="x"||e[1]==="X" ? parseInt(e.slice(2),16) : +e.slice(1)) : (ENT[e.toLowerCase()] ?? m));
+/* recherche plein texte directement dans le HTML des paquets (sans index à construire) : expression insensible à la casse et aux accents, occurrences hors balises */
+const ACC = {a:"aàáâãäå", e:"eèéêë", i:"iìíîï", o:"oòóôõö", u:"uùúûü", c:"cç", n:"nñ", y:"yýÿ"};
+/* 31 oct. : chaque mot est cherché en DÉBUT de mot (« ans » ne trouve plus « dans ») et un nombre seul (« 11 » ne trouve plus « 110 ») ;
+   « 11 ans » = l'âge 11, y compris dans une tranche « 10-12 ans » ou « 11 à 13 ans ». Tous les mots doivent être présents (ET). */
+const AGE_RE = "(?<![0-9])([0-9]{1,2})(?:\\s*(?:-|–|à|a)\\s*([0-9]{1,2}))?\\s*ans?(?![a-z])";
+const motif = t => {
+  if(t[0]==="§"){ const n=+t.slice(1), re=new RegExp(AGE_RE, "gi"); re.ok = m => { const a=+m[1], b=m[2]!=null?+m[2]:a; return n>=Math.min(a,b) && n<=Math.max(a,b); }; return re; }
+  const core = [...t].map(ch => ACC[ch] ? "["+ACC[ch]+"]" : ch.replace(/[.*+?^${}()|[\]\\\/-]/g, "\\$&")).join("");
+  return new RegExp(/^[0-9]+$/.test(t) ? "(?<![0-9])"+core+"(?![0-9])" : "(?<![a-z0-9àáâãäåèéêëìíîïòóôõöùúûüçñýÿœæ])"+core, "gi"); };
+function compte(s, re, html){ re.lastIndex = 0; let c = 0, first = -1, m;
+  while(c < 60 && (m = re.exec(s))){ const i = m.index;
+    if(html && s.lastIndexOf("<", i) > s.lastIndexOf(">", i)){ const g = s.indexOf(">", i); re.lastIndex = g < 0 ? s.length : g + 1; continue; }
+    if(re.ok && !re.ok(m)) continue;
+    if(first < 0) first = i; c++; }
+  return [c, first]; }
+function extrait(x, first, ts){ const h = x.h;
+  if(first < 0) return texte(h.slice(0, 1500).replace(/<[^>]*$/, "")).replace(/\s+/g," ").trim().slice(0, 280) + "…";
+  const a = Math.max(0, first - 700), b = first + 1200; let s = h.slice(a, b);
+  if(a > 0){ const g = s.indexOf(">"), l = s.indexOf("<"); if(g >= 0 && (l < 0 || g < l)) s = s.slice(g + 1); }
+  s = s.replace(/<[^>]*$/, "");
+  const t = texte(s).replace(/\s+/g," "), f = fold(t); let p = -1;
+  for(const w of ts){ const q = f.indexOf(w); if(q >= 0 && (p < 0 || q < p)) p = q; }
+  if(p < 0) p = 0; const u = Math.max(0, p - 90), v = Math.min(t.length, p + 190);
+  return (a > 0 || u > 0 ? "…" : "") + t.slice(u, v) + (v < t.length || b < h.length ? "…" : "");
+}
+
+/* ---------- routage ---------- */
+window.addEventListener("hashchange", ()=>route());
+/* audit 26 oct. : position de lecture gardée au retour arrière (comme dans les Exercices) : défilement + sections ouvertes, par adresse (sessionStorage) */
+let POS = {}, RESTO = null; try{ POS = JSON.parse(sessionStorage.getItem("veille_pos")) || {}; }catch(e){ POS = {}; }
+function noterPos(){ const k = location.hash || "#"; const o = [...document.querySelectorAll("#doc details[open][id]")].map(d=>d.id);
+  POS[k] = {y: Math.round(scrollY), o}; const ks = Object.keys(POS); if(ks.length > 80) delete POS[ks[0]];
+  try{ sessionStorage.setItem("veille_pos", JSON.stringify(POS)); }catch(e){} }
+let posRaf = 0; addEventListener("scroll", ()=>{ if(!posRaf) posRaf = requestAnimationFrame(()=>{ posRaf = 0; noterPos(); }); }, {passive:true});
+document.addEventListener("toggle", e=>{ if(e.target.tagName==="DETAILS" && e.target.closest("#doc")) noterPos(); }, true);
+addEventListener("pagehide", noterPos);
+addEventListener("popstate", ()=>{ RESTO = POS[location.hash || "#"] || null; });
+function restaurer(){ const s = RESTO; RESTO = null; if(!s) return;
+  (s.o||[]).forEach(id=>{ const d = document.getElementById(id); if(d && d.tagName==="DETAILS") d.open = true; });
+  window.scrollTo(0, s.y||0); }
+$("#back").onclick = () => { if(history.length > 1) history.back(); else location.hash = ""; };
+function route(garder){
+  const h = decodeURIComponent(location.hash.slice(1));
+  const m = $("#main"); if(!garder) window.scrollTo(0,0); VX.hero(null); m.style.removeProperty("--pc");
+  if(h.startsWith("/ref")) { location.replace("#"); return; }   /* ancien Référentiel : retiré */
+  onglet(); viderQ(h);
+  if(h.startsWith("/l/")) return showLigne(h.slice(3).split("?")[0], (h.split("?")[1]||"").match(/a=(\d+)/));
+  if(h.startsWith("d/")){ const c = h.slice(2).split("/")[0], hint = h.split("/")[2];
+    if(!BY[c] && AL[c]){ const [nc, ah] = AL[c].split("/"); location.replace("#d/" + nc + ((hint || ah) ? "/" + (hint || ah) : "")); return; }
+    return showDoc(c, hint); }
+  if(h.startsWith("/parcours/")) { showParcours(h.slice(10)); return restaurer(); }
+  if(h.startsWith("t/")) { showTheme(+h.slice(2)); return restaurer(); }
+  if(h.startsWith("r/")) { showRub(h.slice(2)); return restaurer(); }
+  if(h.startsWith("p/")) return showPorte(h.slice(2));
+  if(h.startsWith("s/")) { $("#q").value = h.slice(2); showSearch(h.slice(2)); return restaurer(); }
+  showHome(); restaurer();
+}
+/* la recherche tapée ne reste pas affichée hors de la page de résultats (sauf retour sur un résultat) */
+function viderQ(h){ if(!h.startsWith("s/") && !/^d\/[^/]+\/q/.test(h)) { const q = $("#q"); if(q && document.activeElement !== q) q.value = ""; }
+}
+/* thème d'un document (1-8 ; 0 = Méthode, au Référentiel) */
+function porteOf(x){ return x ? (x.th||0) : 0; }
+function pc(p){ return p ? "#3BE08A" : "#E4FF3A"; }
+const thNom = x => x && x.th ? (TH[x.th-1]||{}).t || "" : "";
+const docsTheme = T => [...T.ent, ...T.rub.flatMap(R=>R.docs)].map(c=>BY[c]).filter(Boolean);
+function parType(cs){ const g = {}; cs.map(c=>BY[c]).filter(Boolean).forEach(x=>{ (g[x.ty]=g[x.ty]||[]).push(x); });
+  return TYO.filter(t=>g[t]).map(t=>`<div class="fold"><h3>${esc(TYL[t])}<small>${g[t].length}</small></h3>${listHTML(g[t], false)}</div>`).join(""); }
+function entreeHTML(T){ return T.ent.map(c=>BY[c]).filter(Boolean).map(x=>{ const e=(x.e||[])[0];
+  return `<a class="resume entree" href="#d/${x.c}"><small>Pour commencer</small><b>${esc(x.t)}</b>${e?`<span class="ex1">${esc(e1txt(e))}</span>`:""}</a>`; }).join(""); }
+
+/* ---------- accueil : 8 thèmes ---------- */
+function pcLus(x){ return x.d.filter(c=>P.lu.includes(c)).length; }
+function showHome(){
+  titre("");
+  const m = $("#main");
+  const nbs = DOCS.filter(x=>x.th).length, c = courant(), ac = ageCourant();
+  VX.hero({vis:"heros_savoirs", lab:"Bibliothèque", titre:"Banque scientifique", sous:`<b>${nbs}</b> documents · 8 thèmes · de 0 à 18 ans`, large:true});
+  let html = `<div class="agerow">${agePill()}<span class="msg">Chaque document âge par âge s'ouvre sur cet âge.</span></div>
+    <div class="vx-cards vx-doors c2">${TH.map(T=>VX.carte({href:"#t/"+T.n, vis:T.v, n:VX.n2(T.n), t:T.t, s:`${T.nb} documents`})).join("")}</div>
+    <p class="msg">Les exercices sont dans <a class="ref" href="banque.html">Exercices</a>.</p>`;
+  const L = P.last && BY[P.last.c] ? P.last : null;
+  if(L) html += `<div class="sec"><a class="resume" href="#d/${L.c}${L.s?"/"+L.s:""}"><small>Reprendre où j'en étais</small><b>${esc(nomClair(BY[L.c]))}</b>${L.st?`<span>${esc(L.st)}</span>`:""}</a></div>`;
+  const favs = P.fav.filter(c=>BY[c]), recs = P.rec.filter(c=>BY[c]).slice(0,8);
+  html += `<div class="sec"><h2>Favoris</h2>${favs.length ? listHTML(favs.map(c=>BY[c]), true) : '<div class="empty">Touche ☆ en haut d\'un document pour le retrouver ici.</div>'}</div>`;
+  if(recs.length) html += `<div class="sec"><h2>Consultés récemment</h2>${listHTML(recs.map(c=>BY[c]), true)}</div>`;
+  /* 31 oct. : un seul bloc replié tout en bas, « Accès direct » (parcours, lignes de grille et outils retirés : redondants) */
+  /* 2 nov. : « Accès direct » retiré (Eliot) ; la recherche reste en haut */
+  m.innerHTML = html;
+  $("#agep").onclick = choisirAge;
+  if(!$("#qa")) return;
+  const qa=$("#qa"), qd=$("#qd"), ql=$("#ql"), as = ageSel();
+  if(![...qa.options].some(o=>o.value===P.age)) P.age="10"; qa.value = as ? String(as.age<4?0:as.age) : ac ? String(ac) : P.age; qd.value=P.dom;
+  const fill=()=>{ const d=qd.value; $("#qlw").hidden = d==="AGE"; const L = d==="PP"?PP : d==="GE"?GE.map(x=>x[0]) : d==="DE"?DE : [];
+    ql.innerHTML = L.map((n,i)=>`<option value="${i}">${i+1} · ${esc(n)}</option>`).join(""); if(+P.ligne < L.length) ql.value=P.ligne; };
+  fill(); qd.onchange=()=>{ P.ligne="0"; fill(); };
+  $("#qgo").onclick=()=>{ P.age=qa.value; P.dom=qd.value; P.ligne=ql.value||"0"; save(); quickGo(qa.value, qd.value, +ql.value); };
+  $("#qline").hidden = qd.value==="AGE"; qd.addEventListener("change",()=>{ $("#qline").hidden = qd.value==="AGE"; });
+  $("#qline").onclick=()=>{ if(qd.value==="AGE") return; P.age=qa.value; P.dom=qd.value; P.ligne=ql.value||"0"; save(); location.hash=`/l/${qd.value}${(+ql.value||0)+1}`+(+qa.value>=4?`?a=${qa.value}`:""); };
+}
+/* rubrique « à onglets » : 2 à 4 documents, un par type (comprendre / âge par âge / séances types) → onglets dans le document */
+function ongDe(R){ const T = R && TH[R.th-1]; if(!R || !T || T.plat) return null; const sib = R.docs.map(c=>BY[c]).filter(Boolean);
+  return sib.length>=2 && sib.length<=4 && sib.every(y=>ONG(y.ty)) && new Set(sib.map(y=>y.ty)).size===sib.length ? sib : null; }
+/* ---------- un thème : document d'entrée, puis rubriques (ou documents rangés par type) ---------- */
+function showTheme(n){
+  const T = TH[n-1]; if(!T) return showHome();
+  titre(T.t);
+  VX.hero({vis:T.v, lab:`Banque scientifique · ${T.nb} documents`, titre:T.t, sous:esc(T.s), bas:true});
+  let html = entreeHTML(T);
+  if(T.plat) html += parType(T.rub.flatMap(R=>R.docs));
+  else { /* audit 26 oct. : la ligne « 3 documents · comprendre, âge par âge, séances types » la plus fréquente est dite une fois, sous l'intertitre ;
+       une rubrique à onglets (un document par type) s'ouvre directement sur son premier document : un tap et un écran presque vide en moins */
+    const lig = R => { const tys = TYO.filter(t=>R.docs.some(c=>BY[c]&&BY[c].ty===t)).map(t=>TYL[t].toLowerCase()); return `${R.docs.length} document${R.docs.length>1?"s":""} · ${tys.join(", ")}`; };
+    const nb = {}; T.rub.forEach(R=>{ const l = lig(R); nb[l] = (nb[l]||0)+1; });
+    const [cour, ncour] = Object.entries(nb).sort((a,b)=>b[1]-a[1])[0] || ["",0], commun = ncour>1 ? cour : "";
+    html += `<div class="sec"><h2>Rubriques<small>${T.rub.length}</small></h2>${commun?`<p class="msg" style="margin:-4px 0 8px">Sauf mention, chaque rubrique : ${esc(commun)}.</p>`:""}<div class="list">${T.rub.map((R,i)=>{ const l = lig(R), o = ongDe(R);
+      return `<a class="li rubl" href="${o ? "#d/"+o[0].c : "#r/"+R.id}"><span class="code">${VX.n2(i+1)}</span><span class="tt">${esc(R.t)}${l!==commun?`<small>${esc(l)}</small>`:""}</span></a>`; }).join("")}</div></div>`; }
+  $("#main").innerHTML = html;
+}
+/* ---------- une rubrique : comprendre · âge par âge · séances types · autres ---------- */
+function showRub(id){
+  const R = RUB[id]; if(!R) return showHome(); const T = TH[R.th-1];
+  if(T.plat) { location.replace("#t/"+T.n); return; }
+  titre(R.t);
+  VX.hero({vis:T.v, lab:T.t, titre:R.t, sous:`${R.docs.length} document${R.docs.length>1?"s":""}`, bas:true});
+  $("#main").innerHTML = parType(R.docs) + `<p class="msg" style="margin-top:16px"><a class="ref" href="#t/${T.n}">‹ Toutes les rubriques · ${esc(T.t)}</a></p>`;
+}
+/* ---------- Référentiel : retiré le 30 oct. 2026 (#/ref et #/ref/methode renvoient à l'accueil de la banque scientifique) ---------- */
+/* ---------- parcours de lecture ---------- */
+function showParcours(id){
+  const x = PCB[id]; if(!x) return showHome();
+  titre("Parcours · "+x.n);
+  P.pc = id; save();
+  const ds = x.d.filter(c=>BY[c]), n = pcLus(x), suiv = ds.find(c=>!P.lu.includes(c));
+  const m = $("#main");
+  VX.hero({vis:"marches", lab:"Parcours de lecture", titre:x.n, sous:esc(x.s), bas:true});
+  m.innerHTML = `<p class="msg" style="margin-top:0">${n===ds.length?"✓ Parcours lu en entier.":n?`${n} sur ${ds.length} documents lus.`:`${ds.length} documents · l'essentiel de chacun se lit en 30 secondes.`}</p>
+    <ol class="steps">${ds.map((c,i)=>{ const d=BY[c], lu=P.lu.includes(c), e=(d.e||[])[0];
+      return `<li class="${lu?"lu":""}"><a href="#d/${c}"><span class="n">${lu?"✓":i+1}</span><span class="tt"><b>${esc(nomClair(d))}</b>${e?`<span>${esc(e1txt(e))}</span>`:""}${c===suiv?`<em>À lire maintenant</em>`:""}</span></a></li>`; }).join("")}</ol>
+    ${x.plus?`<p class="msg" style="margin-top:12px">Et ensuite : <a class="ref" href="${x.plus[0]}">${esc(x.plus[1])}</a></p>`:""}
+    ${n?`<details class="grun-plus"><summary>Plus d'options</summary><div class="grun-plusb"><div class="tools"><button class="ib" id="praz" type="button">Remettre ce parcours à zéro</button></div></div></details>`:""}
+    ${actbar(suiv ? (n ? "Continuer : " : "Commencer : ")+nomClair(BY[suiv]) : "Relire depuis le début", "#d/"+(suiv||ds[0]))}`;
+  const rz = $("#praz"); if(rz) rz.onclick = ()=>{ const av = P.lu.slice(); P.lu = P.lu.filter(c=>!x.d.includes(c)); save(); showParcours(id);
+    if(GR&&GR.ui&&GR.ui.annuler) GR.ui.annuler("Parcours remis à zéro", ()=>{ P.lu = av; save(); showParcours(id); }); };
+}
+function setFs(d){ P.fs=Math.max(14,Math.min(24,P.fs+d)); save(); document.documentElement.style.setProperty("--fs",P.fs+"px"); const m=$("#dmsg"); if(m) m.textContent="Taille du texte des documents : "+P.fs+" px."; }
+/* accès direct : portrait de l'âge, ou le document âge par âge d'une ligne, ouvert à cet âge */
+function quickGo(age, dom, i){
+  let code = "EN.1.8";
+  if(dom==="PP") code = `PP.${i+1}.2`;
+  if(dom==="GE") code = ((LV.L["GE"+(i+1)]||{}).a||[])[0] || GE[i][1];
+  if(dom==="DE") code = ((LV.L["DE"+(i+1)]||{}).c||[])[0] || `TE.9.${i+2}`;
+  location.hash = `d/${code}` + (/^\d+$/.test(age) ? `/a${age}` : "");
+}
+function listHTML(xs, withPath){
+  return `<div class="list">${xs.map(x=>`<a class="li hasx" href="#d/${x.c}"><span class="code cx">${x.c}</span><span class="tt">${esc(x.t)}${withPath?`<small>${esc(x.th ? thNom(x) + (x.d && x.d!==thNom(x) ? " › " + x.d : "") : "Banque scientifique")}</small>`:""}</span></a>`).join("")}</div>`;
+}
+
+/* ---------- anciennes portes (v3) : redirigées vers leur thème ---------- */
+function showPorte(p){ if(PORTES[p]) { location.replace("#t/"+PORTES[p]); return; } if(TH[+p-1]) { location.replace("#t/"+p); return; } showHome(); }
+
+/* ---------- document ---------- */
+function showDoc(code, hint){
+  const x = BY[code]; if(!x) return showHome();
+  if(x.h==null){ const h0 = location.hash, tm = setTimeout(()=>{ if(location.hash===h0) $("#main").innerHTML = '<div class="load">Ouverture du document…</div>'; }, 150);
+    const ko = ()=>{ clearTimeout(tm); if(location.hash===h0) $("#main").innerHTML = '<div class="empty">Ce document n\'a pas pu se charger. Vérifie la connexion pour la première ouverture, puis réessaie.</div>'; };
+    paquet(x.k).then(()=>{ if(x.h==null) return ko(); clearTimeout(tm); if(location.hash===h0) showDoc(code, hint); }, ko); return; }
+  const ref = !x.th, T = ref ? null : TH[x.th-1], R = x.r ? RUB[x.r] : null;
+  P.rec = [code, ...P.rec.filter(c=>c!==code)].slice(0,20); if(!P.lu.includes(code)) P.lu.push(code); save(); titre(nomClair(x));
+  const sib = (ref ? REF : T.plat ? docsTheme(T).map(y=>y.c) : R ? R.docs : [code]).map(c=>BY[c]).filter(Boolean), k = sib.indexOf(x), prev = sib[k-1], next = sib[k+1];
+  const fav = P.fav.includes(code);
+  const pcx = P.pc && PCB[P.pc] && PCB[P.pc].d.includes(code) ? PCB[P.pc] : null, pk = pcx ? pcx.d.indexOf(code) : -1, pnext = pcx ? BY[pcx.d[pk+1]] : null;
+  const lsx = [...new Set((REV[code]||[]).map(y=>y[0]))];
+  const ah = hint && /^a\d+$/.test(hint) ? +hint.slice(1) : null, as = ageSel();
+  const ageDoc = ah != null ? Math.max(4, Math.min(18, ah)) : ageAppli();
+  const m = $("#main"); m.style.setProperty("--pc", pc(x.th));
+  /* héros : visuel du thème (ou du chapitre), « THÈME · RUBRIQUE », titre */
+  const hd = heroDoc(x, T);
+  VX.hero({vis:ref ? (ME_VIS[code]||"marches") : T.v, lab:hd.lab, titre:hd.titre, bas:true});
+  const ong = !ref && R ? ongDe(R) : null;
+  const ageBar = x.ag ? `<div class="agebar"><span>${ah!=null ? "Ouvert sur" : as ? "Ouvert sur l'âge choisi" : "Ouvrir à un âge"}</span>${ah!=null ? `<b>${ah<4?"0-3":ah} ans</b>` : agePill("agep2")}</div>` : "";
+  m.innerHTML = `<div class="vdoc${ref?" vref":""}">
+    ${ong?`<nav class="vx-seg" id="dseg" aria-label="Documents de la rubrique">${ong.map(y=>`<a href="#d/${y.c}"${y===x?' aria-current="page"':""}>${esc(ONG(y.ty))}</a>`).join("")}</nav>`:""}
+    <div class="vacts"><button class="ib star" id="fav" type="button" aria-pressed="${fav}">${fav?"★ Favori":"☆ Favori"}</button>
+    ${pcx?`<div class="pcbar">Parcours <a href="#/parcours/${pcx.id}">${esc(pcx.n)}</a><span>étape ${pk+1} sur ${pcx.d.length}</span></div>`:""}<span class="crumb xp">${esc(x.ch||"")} · ${x.c}</span></div>
+    ${ageBar}
+    <details class="toc" id="toc" hidden></details>
+    <article class="doc" id="doc"></article>
+    <div class="pn">${prev?`<a href="#d/${prev.c}"><small>‹ ${ref?"Chapitre précédent":"Précédent"}</small>${esc(prev.t)}</a>`:"<span></span>"}${next?`<a class="nx" href="#d/${next.c}"><small>${ref?"Chapitre suivant":"Suivant"} ›</small>${esc(next.t)}</a>`:"<span></span>"}</div>
+    <div class="notes"><label for="nt" style="font-weight:600">Mes notes sur ce document</label><textarea id="nt" placeholder="Idées, joueurs concernés, à tester…"></textarea><div class="msg" id="ntm"></div></div>
+    <details class="grun-plus"><summary>Plus d'options</summary><div class="grun-plusb"><div class="tools">
+      <button class="ib" id="fsm" type="button" aria-label="Texte plus petit">A−</button><button class="ib" id="fsp" type="button" aria-label="Texte plus grand">A+</button>
+      <button class="ib" id="tout" type="button">Tout déplier</button>
+      ${ref?"":`<a class="ib" href="#${R&&!T.plat?"r/"+R.id:"t/"+T.n}">Tous les documents · ${esc(R&&!T.plat?R.t:T.t)}</a>`}</div><p class="msg" id="dmsg"></p></div></details></div>
+    ${pcx ? (pnext ? actbar("Étape suivante : "+nomClair(pnext), "#d/"+pnext.c) : actbar("Parcours terminé · revoir les étapes", "#/parcours/"+pcx.id))
+      : lsx.length && lsx.length<=4 ? actbar("Créer une séance · "+ligNom(lsx[0]), ()=>0) : next ? actbar("Suivant : "+nomClair(next), "#d/"+next.c) : ""}`;
+  const am = $("#actmain"); if(am){ am.dataset.sess = lsx[0]; am.dataset.age = ageDoc; }
+  /* onglets : on remplace l'adresse (pas d'entrée d'historique) : un seul retour ramène au thème */
+  const sg = $("#dseg"); if(sg) sg.onclick = e=>{ const a = e.target.closest("a[href]"); if(!a || a.getAttribute("aria-current")) { if(a) e.preventDefault(); return; } e.preventDefault(); location.replace(a.getAttribute("href")); };
+  const ap = $("#agep2"); if(ap) ap.onclick = choisirAge;
+  // structure : L'essentiel encadré, Le détail en sections dépliables
+  const doc = $("#doc"); const tmp = document.createElement("div"); tmp.innerHTML = x.h;
+  tmp.querySelectorAll("table").forEach(t=>{ const w=document.createElement("div"); w.className="tw"; t.replaceWith(w); w.appendChild(t); });
+  let cur = null, mode = null, sections = [];
+  for(const node of [...tmp.childNodes]){
+    if(node.nodeName==="H2"){
+      const t = fold(node.textContent);
+      if(t.includes("essentiel")){ cur = document.createElement("section"); cur.className="ess"; cur.appendChild(node); doc.appendChild(cur); mode="ess"; continue; }
+      if(/^exercices et renvois/.test(t)) node.textContent = "Exercices et renvois";
+      else if(/^le detail/.test(t)) node.textContent = "Le détail";
+      mode = "det"; doc.appendChild(node); cur = doc; continue;
+    }
+    if(node.nodeName==="H3" && mode!=="ess"){
+      const d = document.createElement("details"); const s = document.createElement("summary"); const nm = /^(\d+)\.\s*(.*)$/.exec(node.textContent);
+      s.dataset.t = nm ? nm[2] : node.textContent; s.innerHTML = nm ? `<i>${VX.n2(nm[1])}</i><span>${esc(nm[2])}</span>` : esc(node.textContent); d.appendChild(s);
+      d.id = "s"+sections.length; sections.push([d.id, node.textContent]); doc.appendChild(d); cur = d; continue;
+    }
+    (cur || doc).appendChild(node);
+  }
+  /* « L'essentiel » : la première liste devient des points numérotés 01, 02… ; le sommaire (replié sur iPhone) reste AVANT, visible dès le premier écran (audit 26 oct.) */
+  const essS = doc.querySelector("section.ess");
+  if(essS){ const ul = essS.querySelector(":scope > ul"); if(ul) ul.classList.add("vx-nl"); const h2 = essS.querySelector("h2"); if(h2) h2.textContent = "L'essentiel"; }
+  if(sections.length>2){ const toc=$("#toc"); toc.hidden=false; toc.open = ref || matchMedia("(min-width:900px)").matches;
+    toc.innerHTML = `<summary>Sommaire · ${sections.length} sections</summary><ol>${sections.map(([id,t])=>`<li><a href="#d/${code}/${id}" data-s="${id}">${esc(t.replace(/^\d+\.\s*/,""))}</a></li>`).join("")}</ol>`;
+    toc.onclick = e=>{ const a=e.target.closest("a[data-s]"); if(!a) return; e.preventDefault(); history.replaceState(null,"","#d/"+code+"/"+a.dataset.s); ouvrirSection(a.dataset.s); }; }
+  if(sections.length===1 || ref){ doc.querySelectorAll("details").forEach(d=>d.open = true); }   /* Méthode : lisible en entier, tout est déplié */
+  $("#tout").onclick = ()=>{ const ds=[...doc.querySelectorAll("details")], o=ds.some(d=>!d.open); ds.forEach(d=>d.open=o); $("#tout").textContent = o ? "Tout replier" : "Tout déplier"; };
+  if(window.GRUN&&GRUN.clair) GRUN.clair(document.getElementById("doc"));   /* lignes de grille en clair (mode simple) */
+  refsClaires(doc);
+  // favoris, taille, notes
+  $("#fav").onclick = ()=>{ const on = !P.fav.includes(code); P.fav = on ? [code,...P.fav] : P.fav.filter(c=>c!==code); save(); $("#fav").setAttribute("aria-pressed",on); $("#fav").textContent = on?"★ Favori":"☆ Favori"; };
+  $("#fsm").onclick=()=>setFs(-1); $("#fsp").onclick=()=>setFs(1);
+  const nt=$("#nt"); nt.value = P.notes[code]||""; let tm;
+  nt.oninput = ()=>{ clearTimeout(tm); tm=setTimeout(()=>{ if(nt.value.trim()) P.notes[code]=nt.value; else delete P.notes[code]; save(); $("#ntm").textContent="Note enregistrée sur cet appareil."; },500); };
+  // reprendre : dernière section ouverte de ce document
+  P.last = {c:code, s:null, st:""}; save();
+  doc.addEventListener("toggle", e=>{ const d=e.target; if(d.tagName!=="DETAILS"||!d.open||!/^s\d+$/.test(d.id)) return; P.last={c:code, s:d.id, st:d.querySelector("summary").dataset.t||d.querySelector("summary").textContent.replace(/^\d+\.\s*/,"")}; save(); }, true);
+  // aller à une section, à un âge (adresse, sinon âge choisi de la Bibliothèque) ou surligner une recherche
+  if(RESTO){ restaurer(); return; }   /* retour arrière : sections ouvertes et position d'avant, sans re-sauter à l'âge */
+  if(hint && /^s\d+$/.test(hint)) ouvrirSection(hint);
+  else if(ah != null) goAge(ah, as && as.sexe);
+  else if(hint && hint.startsWith("q")) highlight(hint.slice(1));
+  else if(x.ag && as) goAge(as.age, as.sexe);
+}
+/* renvois « PP.6.1 », « PP.9 », familles « EX.PP.6.1 » : en mode simple, le code laisse place au nom (le code reste visible en mode expert).
+   Audit 26 oct. : si le texte qui suit le code nomme déjà le document (« PP.1.2 Force du bas du corps : âge par âge… »), ce nom devient le lien
+   et rien n'est ajouté (plus de nom écrit deux fois) ; sinon le nom clair est ajouté. Le lien est toujours gardé. */
+const MAJ = /^(\s*[:–—]\s*|\s+)(?=[A-ZÀ-ÖØ-ÞŒ«"])/;
+function nomRenvoi(a, c){ const h = a.getAttribute("href")||"";
+  if(a.classList.contains("exf")) return FX[c] || null;
+  if(h.startsWith("#d/")){ const y = BY[h.slice(3)]; return y ? nomClair(y) : null; }
+  if(h.startsWith("#r/")){ const R = RUB[h.slice(3)]; return R ? R.t : null; }
+  if(h.startsWith("#t/")){ const T = TH[+h.slice(3)-1]; return T ? T.t : null; }
+  return null; }
+function refsClaires(root){
+  /* renvois vers les anciens chapitres ME.* ou le Référentiel (retirés) : le lien devient du texte simple */
+  root.querySelectorAll('a[href^="#d/ME."], a[href="#/ref"], a[href^="#/ref/"]').forEach(a=>a.replaceWith(document.createTextNode(a.textContent)));
+  root.querySelectorAll("a.ref, a.exf").forEach(a=>{ const c = a.textContent.trim(); if(!/^(EX\.)?[A-Z]{2}\.\d/.test(c) || a.querySelector(".xp")) return;
+    const nom = nomRenvoi(a, c); if(!nom) return;
+    if(a.classList.contains("exf")) a.classList.add("nom");
+    const nx = a.nextSibling, t = nx && nx.nodeType===3 ? nx.nodeValue : "", m = MAJ.exec(t);
+    if(m){ /* le texte nomme déjà la cible : il entre dans le lien jusqu'au premier séparateur (« · », « ; », « ( », fin de phrase) */
+      const r = t.slice(m[0].length), z = r.search(/\s+[·;|]\s|\s+\(|\.\s|\.$|\)\s*[.,;:]?\s*$|\s+[–—]\s/), cut = z<0 ? r.length : z;
+      if(cut >= 3){ const y = (a.getAttribute("href")||"").startsWith("#d/") ? BY[a.getAttribute("href").slice(3)] : null, r0 = r.slice(0, cut);
+        /* titre générique écrit dans le texte (« Comprendre et développer : bases… ») : on montre le nom clair, qui dit de quelle qualité il s'agit */
+        const lib = y && nomClair(y)!==y.t && fold(r0).startsWith(fold(y.t).slice(0,18)) ? nomClair(y) : r0;
+        a.innerHTML = `<span class="xp">${c} </span>`; a.appendChild(document.createTextNode(lib)); nx.nodeValue = r.slice(cut); return; } }
+    const court = a.classList.contains("exf") && /^\s*\(/.test(t) ? nom.split(" : ")[0] : nom;   /* « EX.PP.1.1 (squats…) » → « Force du bas du corps (squats…) » */
+    a.innerHTML = `<span class="xp">${c}</span><span class="sx">${esc(court)}</span>`; });
+}
+function ouvrirSection(id){ const d=document.getElementById(id); if(!d||d.tagName!=="DETAILS") return; d.open=true; setTimeout(()=>{ d.scrollIntoView({behavior:"smooth",block:"start"}); d.querySelector("summary").classList.add("flash"); },60); }
+/* créer une séance sur une ligne : relais vers Create my session (séance pré-remplie avec les exercices de la ligne),
+   pour le joueur ou le groupe en cours (composant commun G.ui.session : durée, lieu, matériel du coach) */
+document.addEventListener("click", e=>{ const b=e.target.closest("[data-sess]"); if(!b) return; e.preventDefault();
+  const l=b.dataset.sess, retour="veille.html"+location.hash, c=courant();
+  const rel = {de:"veille", vers:"seances", retour, lignes:[l], theme:ligNom(l), titre:ligNom(l), type:l.startsWith("PP")?"PPI":"TI"};
+  if(!(c && ageCourant())) rel.age = +b.dataset.age||null;
+  if(GR&&GR.ui&&GR.ui.session){ try{ GR.ui.session({relais:rel}); return; }catch(x){ console.warn(x); } }
+  if(GR&&GR.relais){ try{ GR.relais.envoyer(Object.assign(rel, {age:+b.dataset.age||null})); }catch(x){} location.href=GR.href("seances","#/nouvelle"); }
+  else location.href="seances.html#/nouvelle"; });
+/* ---------- documents d'une ligne de grille ---------- */
+function showLigne(l, am){
+  if(!okLig(l)) return showHome();
+  const age = am ? Math.max(4, Math.min(18, +am[1])) : (ageCourant() || (ageSel() ? ageAppli() : null)); titre(ligNom(l));
+  const d = l.slice(0,2), col = LCOL[d], g = (LV.L||{})[l] || {}, G = LV.g || {};
+  const lst = cs => `<div class="list">${cs.filter(c=>BY[c]).map(c=>{ const x=BY[c]; return `<a class="li hasx" href="#d/${c}${(g.a||[]).includes(c)&&age?`/a${age}`:""}"><span class="code cx">${c}</span><span class="tt">${esc(x.t)}<small>${esc(thNom(x)+(x.d&&x.d!==thNom(x)?" › "+x.d:""))}</small></span></a>`; }).join("")}</div>`;
+  const order = [["c","Comprendre"],["a","Âge par âge"],["s","Séances et routines"],["t","Tests et évaluation"],["b","Pour aller plus loin"]];
+  const m = $("#main"); m.style.setProperty("--pc", col);
+  VX.hero({vis:d==="PP"?"physique":"technique", lab:`${DOMN[d]} · ligne ${+l.slice(2)}`, titre:ligNom(l), sous:"Comprendre, situer l'âge, entraîner, évaluer", bas:true});
+  m.innerHTML = `<div class="lines"><div class="lrow"><a class="lk pri" href="banque.html#/l/${l}${age?`?a=${age}`:""}">Exercices de cette ligne${age?` · ${age} ans`:""}</a><a class="lk" href="#" data-sess="${l}" data-age="${age||""}">Créer une séance</a><a class="lk" href="grilles.html#/ligne/${l}/G/${age||10}">Grille garçons ${age||10} ans</a><a class="lk" href="grilles.html#/ligne/${l}/F/${age||10}">Grille filles ${age||10} ans</a></div></div>
+   ${order.filter(([k])=>(g[k]||[]).some(c=>BY[c])).map(([k,t])=>`<div class="fold"><h3>${esc(G[k]||t)}</h3>${lst(g[k])}</div>`).join("") || '<div class="empty" style="margin-top:12px">Aucun document lié à cette ligne.</div>'}
+   ${actbar("Créer une séance · "+ligNom(l), ()=>0)}`;
+  const am2=$("#actmain"); if(am2){ am2.dataset.sess=l; am2.dataset.age=age||""; }
+}
+/* âge écrit dans un titre de section : « 12-13 ans », « 6 ans », « 0-2 ans », « 16 à 18 ans » (numérotation « 5. » ignorée) */
+function ageRange(t){ const m = /^(?:\d+\.\s*)?(\d{1,2})(?:\s*(?:-|–|à)\s*(\d{1,2}))?\s*ans$/i.exec(String(t).trim()); return m ? [+m[1], +(m[2]||m[1])] : null; }
+const ageDans = (r, age) => age < 4 ? r[0] <= 3 : age >= r[0] && age <= r[1];
+function ageIn(text, age){
+  const t = fold(text); if(!/\ban|ans\b/.test(t)) return false;
+  const nums = (t.match(/\d+/g)||[]).map(Number).filter(n=>n<=25); if(!nums.length) return false;
+  if(/\d+\s*(-|a|à|et)\s*\d+/.test(t) && nums.length>=2){ const lo=Math.min(...nums), hi=Math.max(...nums); return age>=lo && age<=hi; }
+  return nums.includes(age);
+}
+/* ouvre la (les) section(s) de l'âge, la met en évidence ; à l'intérieur, la partie « Filles » ou « Garçons » du sexe choisi */
+function goAge(age, sexe){
+  const doc = $("#doc"); if(!doc) return;
+  doc.querySelectorAll(".age-on").forEach(e=>e.classList.remove("age-on")); doc.querySelectorAll(".sx-on").forEach(e=>e.classList.remove("sx-on")); doc.querySelectorAll(".agetag").forEach(e=>e.remove());
+  /* lignes « âge » des tableaux (L'essentiel, tableaux de synthèse) */
+  doc.querySelectorAll("tr").forEach(tr=>{ const c = tr.cells[0]; const r = c && c.tagName==="TD" ? ageRange(c.textContent.replace(/\s*\(.*\)$/,"")) : null; if(r && ageDans(r, age)) tr.classList.add("age-on"); });
+  const cibles = [...doc.querySelectorAll("details")].filter(d=>{ const r = ageRange(d.querySelector("summary").dataset.t || d.querySelector("summary").textContent); return r && ageDans(r, age); });
+  if(cibles.length){
+    cibles.forEach(d=>{ d.open = true; d.classList.add("age-on"); const s = d.querySelector("summary"); const tag = document.createElement("em"); tag.className = "agetag"; tag.textContent = "Âge choisi"; s.appendChild(tag);
+      if(sexe){ let on = false; for(const n of d.children){ if(n.tagName==="SUMMARY") continue;
+        if(/^H[3-5]$/.test(n.tagName)){ const t = fold(n.textContent.trim()); on = sexe==="F" ? /^(les )?(filles?|jeunes? filles?)\b/.test(t) : /^(les )?(garcons?|jeunes? garcons?)\b/.test(t); }
+        if(on) n.classList.add("sx-on"); } } });
+    const t = cibles[0]; setTimeout(()=>{ t.scrollIntoView({behavior:"smooth",block:"start"}); t.querySelector("summary").classList.add("flash"); },60); return; }
+  let target = [...doc.querySelectorAll("details")].find(d=>ageIn(d.querySelector("summary").textContent, age));
+  if(target){ target.open=true; target.classList.add("age-on"); setTimeout(()=>{ target.scrollIntoView({behavior:"smooth",block:"start"}); target.querySelector("summary").classList.add("flash"); },60); return; }
+  const h = [...doc.querySelectorAll("h4,h5")].find(e=>ageIn(e.textContent, age));
+  if(h){ const d=h.closest("details"); if(d) d.open=true; setTimeout(()=>{ h.scrollIntoView({behavior:"smooth",block:"center"}); h.classList.add("flash"); },60); return; }
+  const td = [...doc.querySelectorAll("td:first-child")].find(e=>ageIn(e.textContent, age));
+  if(td){ const tr=td.parentNode; setTimeout(()=>{ tr.scrollIntoView({behavior:"smooth",block:"center"}); tr.classList.add("flash"); },60); }
+}
+
+/* ---------- recherche ---------- */
+let sT;
+$("#q").addEventListener("input", e=>{ clearTimeout(sT); const v=e.target.value.trim(); sT=setTimeout(()=>{ if(v.length>=2) history.replaceState(null,"","#s/"+encodeURIComponent(v)), showSearch(v); else if(!v && location.hash.startsWith("#s/")) location.hash=""; },250); });
+$("#q").addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.target.blur(); } });
+const VIDES = new Set(["de","du","des","la","le","les","l","d","un","une","et","ou","en","au","aux","a","pour","par","sur","dans","avec","chez","qui","que"]);
+function terms(q){ const w = fold(q).replace(/['’]/g," ").split(/\s+/).filter(Boolean), out=[];
+  for(let i=0;i<w.length;i++){ const m=/^([0-9]{1,2})(ans?)$/.exec(w[i]); if(m){ out.push(m[1], m[2]); continue; }
+    if((w[i].length>=2 || /^[0-9]$/.test(w[i])) && !VIDES.has(w[i])) out.push(w[i]); }
+  return [...new Set(out)]; }
+/* termes à surligner (l'âge « §11 » se surligne « 11 ») */
+const vus = ts => ts.map(t => t[0]==="§" ? t.slice(1) : t);
+function showSearch(q, fini){
+  const ts = terms(q), m = $("#main");
+  if(!ts.length){ showHome(); return; } titre("Recherche « "+q+" »");
+  if(!fini && DOCS.some(x=>x.h==null)){ const h0 = location.hash; if(!m.querySelector(".res")) m.innerHTML = `<h1>Recherche</h1><p class="lead">Recherche de « ${esc(q)} » dans toute la banque scientifique…</p>`;
+    tousPaquets().then(()=>{ if(location.hash===h0) showSearch(q, true); }, ()=>{ if(location.hash===h0) m.innerHTML = '<div class="empty">La recherche n\'a pas pu charger tous les documents. Vérifie la connexion pour la première ouverture, puis réessaie.</div>'; }); return; }
+  /* un mot qui nomme un thème (technique, tactique, physique, mental…) filtre par thème : « technique 11 ans » = les documents du thème Technique qui parlent de 11 ans */
+  const THK = {technique:4, techniques:4, tactique:5, tactiques:5, physique:3, mental:6, mentale:6, sante:7, recuperation:7, entrainer:8, entrainement:8, developpement:1, analyse:2};
+  const tth = [], tx = ts;   /* 31 oct. 21:39 : chaque mot tapé doit être écrit dans le document (titre ou texte), sans exception */
+  const res = [], RE = tx.map(motif);
+  DOCS.forEach((x,i)=>{ if(x.h==null) return;
+    if(tth.some(t=>x.th!==THK[t] && !fold(x.t).includes(t))) return;
+    let score=tth.length?10:0, first=-1;
+    for(const re of RE){ const [ct] = compte(x.t, re, false), [cb, p] = compte(x.h, re, true); if(!ct && !cb) return; if(p>=0 && (first<0||p<first)) first=p; score += Math.min(60, ct+cb); }
+    if(ts[0][0]!=="§" && fold(x.t).includes(ts[0])) score+=40;
+    res.push({i, score, first});
+  });
+  res.sort((a,b)=>b.score-a.score);
+  const top = res.slice(0,60);
+  let html = `<h1>Recherche</h1><p class="lead">${res.length ? `${res.length} document${res.length>1?"s":""} pour « ${esc(q)} »${res.length>60?" · les 60 plus pertinents":""}` : `Aucun document ne contient « ${esc(q)} ». Essaie un mot plus court ou un synonyme.`}</p><div class="sec">`;
+  html += top.map(r=>{ const x=DOCS[r.i];
+    const snip = markTerms(esc(extrait(x, r.first, vus(ts))), vus(ts));
+    return `<a class="res" href="#d/${x.c}/q${encodeURIComponent(q)}"><div class="t">${esc(x.t)}</div><div class="w"><span class="xp">${x.c} · </span>${esc(thNom(x))}${x.d&&x.d!==thNom(x)?" › "+esc(x.d):""}</div><div class="s">${snip}</div></a>`; }).join("");
+  m.innerHTML = html + "</div>";
+}
+function markTerms(htmlText, ts){
+  const f = fold(htmlText); let out="", i=0;
+  const hits=[]; ts.forEach(t=>{ let p=f.indexOf(t); while(p>=0){ hits.push([p,p+t.length]); p=f.indexOf(t,p+t.length); } });
+  hits.sort((a,b)=>a[0]-b[0]); let last=0;
+  for(const [s,e] of hits){ if(s<last) continue; const pre=htmlText.slice(last,s); if(/&[a-z]*$/.test(pre)) continue; out+=pre+"<mark>"+htmlText.slice(s,e)+"</mark>"; last=e; }
+  return out+htmlText.slice(last);
+}
+function highlight(q){
+  const ts = vus(terms(q)); if(!ts.length) return; const doc=$("#doc");
+  const walker = document.createTreeWalker(doc, NodeFilter.SHOW_TEXT); const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+  let firstMark=null;
+  for(const n of nodes){ const f=fold(n.nodeValue); const hits=[]; ts.forEach(t=>{ let p=f.indexOf(t); while(p>=0){ hits.push([p,p+t.length]); p=f.indexOf(t,p+t.length); } });
+    if(!hits.length) continue; hits.sort((a,b)=>a[0]-b[0]);
+    const frag=document.createDocumentFragment(); let last=0;
+    for(const [s,e] of hits){ if(s<last) continue; frag.append(n.nodeValue.slice(last,s)); const mk=document.createElement("mark"); mk.textContent=n.nodeValue.slice(s,e); frag.append(mk); if(!firstMark) firstMark=mk; last=e; }
+    frag.append(n.nodeValue.slice(last)); n.replaceWith(frag); }
+  doc.querySelectorAll("mark").forEach(mk=>{ const d=mk.closest("details"); if(d) d.open=true; });
+  if(firstMark) setTimeout(()=>firstMark.scrollIntoView({behavior:"smooth",block:"center"}),80);
+}
+
+/* ---------- sauvegarde ---------- */
+async function exportData(){
+  if(window.GRUN){ GRUN.telecharger(GRUN.exportAll(), "GRUN_sauvegarde_"+GRUN.today()+".json"); return; }
+  const blob = new Blob([JSON.stringify({format:"veille", version:1, date:new Date().toISOString().slice(0,10), fav:P.fav, notes:P.notes}, null, 1)], {type:"application/json"});
+  const name = "Veille_favoris_notes_"+new Date().toISOString().slice(0,10)+".json";
+  let dl=null; try{ dl = await window.claude?.use?.("downloads"); }catch(e){}
+  if(dl){ try{ await dl.save({filename:name, data:blob}); return; }catch(e){ if(e&&e.code==="declined") return; } }
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove();
+}
+async function importData(e){
+  const f=e.target.files&&e.target.files[0]; e.target.value=""; if(!f) return; const m=$("#dmsg");
+  try{ const d=JSON.parse(await f.text());
+    if(window.GRUN && d && d.app==="GRUN" && d.data){ GRUN.importAll(d); P=Object.assign(P, load()); migrer(); showHome(); $("#dmsg").textContent="Sauvegarde GRÜN restaurée (fusionnée avec les données de l'appareil)."; return; }
+    if(d.format!=="veille") throw 0;
+    P.fav=[...new Set([...(d.fav||[]),...P.fav])]; P.notes=Object.assign({},P.notes,d.notes||{}); migrer(); save(); showHome(); $("#dmsg").textContent="Favoris et notes restaurés."; }
+  catch(err){ m.textContent="Ce fichier n'est pas une sauvegarde reconnue (GRUN_sauvegarde_….json ou Veille_favoris_notes_….json)."; }
+}
+
+boot();
+</script>
+</body></html>
