@@ -95,7 +95,6 @@ input:focus,textarea:focus,select:focus{box-shadow:0 0 0 3px rgba(${LIME},.16)}
     else if (first) {
       const kids = [...main.children].filter(x => x.offsetHeight > 0).slice(0, 10);
       kids.forEach((k, i) => A(k, [{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { duration: 460, delay: 30 + i * 30, easing: EASE }));
-      titles(main);
     } else if (navKind === "tab") {
       A(main, [{ opacity: 0 }, { opacity: 1 }], { duration: 240, easing: "ease-out" });
     } else {
